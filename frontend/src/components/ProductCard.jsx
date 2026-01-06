@@ -1,8 +1,15 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaShoppingCart, FaEye, FaStar } from 'react-icons/fa';
 import './ProductCard.css';
 
 const ProductCard = ({ product }) => {
+  const navigate = useNavigate();
+
+  const handleAddToCart = () => {
+    navigate(`/product/${product.id}`);
+  };
+
   return (
     <div className="card">
       <div className="image-box">
@@ -14,7 +21,7 @@ const ProductCard = ({ product }) => {
         <img src={product.img || "https://via.placeholder.com/300"} alt={product.name} />
 
         <div className="overlay-actions">
-          <button className="quick-view-btn">
+          <button className="quick-view-btn" onClick={() => navigate(`/product/${product.id}`)}>
             <FaEye /> Quick View
           </button>
         </div>
@@ -27,7 +34,7 @@ const ProductCard = ({ product }) => {
         <div className="rating-row">
           <FaStar className="star-icon" />
           <span className="rating-score">4.8</span>
-          <span className="review-count">(2,543 reviews)</span>
+          <span className="review-count">({product.reviews} reviews)</span>
         </div>
 
         <div className="price-row">
@@ -35,7 +42,7 @@ const ProductCard = ({ product }) => {
           {product.oldPrice && <span className="old-price">${product.oldPrice}</span>}
         </div>
 
-        <button className="add-cart-full">
+        <button className="add-cart-full" onClick={handleAddToCart}>
           <FaShoppingCart /> Add to Cart
         </button>
       </div>

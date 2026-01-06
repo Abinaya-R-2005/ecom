@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { FaSearch, FaUser, FaHeart, FaShoppingCart, FaBars, FaMapMarkerAlt } from 'react-icons/fa';
 import './Header.css';
 
-const Header = ({ cartCount = 0 }) => {
+const Header = ({ cartCount = 0, onSearch }) => {
   const [showCategories, setShowCategories] = useState(false);
 
   return (
@@ -32,7 +32,11 @@ const Header = ({ cartCount = 0 }) => {
 
         {/* Search Bar */}
         <div className="search-bar">
-          <input type="text" placeholder="Search for products, brands and more..." />
+          <input
+            type="text"
+            placeholder="Search for products, brands and more..."
+            onChange={(e) => onSearch && onSearch(e.target.value)}
+          />
           <button className="search-btn">
             <FaSearch />
           </button>
