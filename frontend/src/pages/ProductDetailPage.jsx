@@ -19,9 +19,45 @@ const ProductDetailPage = () => {
 
     const sizes = ["S", "M", "L", "XL", "XXL"];
 
-    const handlePlaceOrder = () => {
-        alert(`Order placed for ${quantity} x ${product.name} (Size: ${selectedSize})`);
-        navigate("/home");
+    const handlePlaceOrder = async () => {
+        const userStr = localStorage.getItem("user");
+        if (!userStr) {
+            alert("Please login to place an order");
+            navigate("/");
+            return;
+        }
+
+        const user = JSON.parse(userStr);
+
+        try {
+            const response = await fetch("http://localhost:5000/orders", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    productName: product.name,
+                    productId: product.id,
+                    size: selectedSize,
+                    quantity: quantity,
+                    price: product.price,
+                    userEmail: user.email,
+                    userName: user.name,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Order placed successfully!");
+                navigate("/home");
+            } else {
+                alert(data.message || "Failed to place order");
+            }
+        } catch (err) {
+            console.error("Order Error:", err);
+            alert("Server error. Please try again later.");
+        }
     };
 
     return (

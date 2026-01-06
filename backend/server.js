@@ -22,6 +22,21 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
+// -------------------- Order Schema --------------------
+const orderSchema = new mongoose.Schema({
+  productName: String,
+  productId: Number,
+  size: String,
+  quantity: Number,
+  price: Number,
+  userEmail: String,
+  userName: String,
+  timestamp: { type: Date, default: Date.now }
+});
+
+const Cart = mongoose.model("Cart", orderSchema, "cart");
+
+
 // -------------------- SIGNUP --------------------
 app.post("/signup", async (req, res) => {
   try {
@@ -85,6 +100,34 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+// -------------------- ORDERS --------------------
+app.post("/orders", async (req, res) => {
+  try {
+    const { productName, productId, size, quantity, price, userEmail, userName } = req.body;
+
+    if (!userEmail) {
+      return res.status(400).json({ message: "User email is required" });
+    }
+
+    const newOrder = await Cart.create({
+      productName,
+      productId,
+      size,
+      quantity,
+      price,
+      userEmail,
+      userName
+    });
+
+    res.json({ message: "Order placed successfully", order: newOrder });
+
+  } catch (error) {
+    console.error("Order error:", error);
+    res.status(500).json({ message: "Failed to place order" });
+  }
+});
+
 
 
 // -------------------- SERVER --------------------
