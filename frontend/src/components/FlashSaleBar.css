@@ -1,0 +1,41 @@
+/* src/components/FlashSaleBar.css */
+.flash-sale-bar {
+    background: #f97316;
+    /* Orange-500 */
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 0;
+}
+
+.flash-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.flash-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.divider {
+    opacity: 0.5;
+    font-weight: 400;
+}
+
+@media (max-width: 768px) {
+    .flash-content {
+        flex-direction: column;
+        gap: 4px;
+        text-align: center;
+    }
+
+    .divider {
+        display: none;
+    }
+}

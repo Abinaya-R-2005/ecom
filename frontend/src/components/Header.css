@@ -1,175 +1,238 @@
 /* src/components/Header.css */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
-.sh-header {
-  background: #fff;
-  width: 100%;
-  font-family: 'Inter', sans-serif;
+:root {
+  --primary-color: #8b5cf6;
+  /* Light Purple/Violet */
+  --primary-dark: #7c3aed;
+  /* Deep Purple */
+  --accent-color: #fca5a5;
+  /* Soft Red/Pink for badges */
+  --text-dark: #1f2937;
+  --text-light: #6b7280;
+  --bg-light: #f3f4f6;
+  --white: #ffffff;
 }
 
+.sh-header {
+  background: var(--white);
+  width: 100%;
+  font-family: 'Outfit', sans-serif;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Top Banner */
 .top-banner {
-  background: #7c3aed; /* The ShopHub Purple */
-  color: #fff;
+  background: var(--primary-dark);
+  color: var(--white);
   padding: 8px 0;
   font-size: 13px;
+  font-weight: 500;
 }
 
 .banner-flex {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
 }
 
-.top-links span {
-  margin-left: 20px;
-  cursor: pointer;
+.delivery-loc {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.9;
 }
 
+.loc-icon {
+  font-size: 14px;
+}
+
+.top-links {
+  display: flex;
+  gap: 20px;
+}
+
+.top-links a {
+  color: var(--white);
+  text-decoration: none;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+}
+
+.top-links a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+/* Main Navigation */
 .main-nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 0;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+  padding: 16px 20px;
+  gap: 40px;
 }
 
-.logo {
+/* Logo */
+.logo-brand {
   font-size: 28px;
   font-weight: 800;
-  color: #7c3aed;
+  color: var(--white);
+  background: var(--primary-dark);
+  padding: 4px 12px;
+  border-radius: 8px;
   text-decoration: none;
+  letter-spacing: -0.5px;
+  box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.3);
+  transition: transform 0.2s;
 }
 
-.logo span {
-  color: #111827;
+.logo-brand:hover {
+  transform: translateY(-2px);
 }
 
+/* Search Bar */
 .search-bar {
-  flex: 0.6;
+  flex: 1;
+  max-width: 600px;
   display: flex;
-  background: #f3f4f6;
+  background: var(--bg-light);
   border-radius: 8px;
   padding: 4px;
+  transition: box-shadow 0.2s;
+}
+
+.search-bar:focus-within {
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
+  background: var(--white);
 }
 
 .search-bar input {
   flex: 1;
   background: transparent;
   border: none;
-  padding: 10px 15px;
+  padding: 10px 16px;
+  font-size: 15px;
+  color: var(--text-dark);
   outline: none;
+  font-family: inherit;
+}
+
+.search-bar input::placeholder {
+  color: #9ca3af;
 }
 
 .search-btn {
-  background: #7c3aed;
-  color: white;
+  background: var(--primary-dark);
+  color: var(--white);
   border: none;
   border-radius: 6px;
-  padding: 0 15px;
+  width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
+.search-btn:hover {
+  background: #6d28d9;
+}
+
+/* Nav Icons */
 .nav-icons {
   display: flex;
-  gap: 25px;
   align-items: center;
+  gap: 24px;
 }
 
-.nav-icons a {
-  text-decoration: none;
-  color: #374151;
-  font-size: 15px;
+.icon-link {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 5px;
+  text-decoration: none;
+  color: var(--text-dark);
+  font-size: 12px;
+  gap: 4px;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.icon-link:hover {
+  color: var(--primary-dark);
+}
+
+.nav-icon {
+  font-size: 20px;
 }
 
 .cart-badge {
-  background: #7c3aed;
-  color: white;
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 10px;
-  margin-left: -8px;
-  vertical-align: top;
-}
-
-.categories {
-  display: flex;
-  justify-content: flex-start;
-  gap: 30px;
-  padding: 15px 0;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  border-top: 1px solid #f3f4f6;
-}
-
-.cat-item {
-  font-size: 14px;
-  color: #4b5563;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.cat-item:hover {
-  color: #7c3aed;
-}
-/* Smooth Transitions for all interactive elements */
-.top-links span, 
-.search-btn, 
-.nav-icons a, 
-.cat-item {
-  transition: all 0.3s ease;
-}
-
-/* Top Banner Links */
-.top-links span:hover {
-  color: #eef2ff;
-  text-decoration: underline;
-}
-
-/* Logo Hover - slight shift */
-.logo:hover {
-  opacity: 0.9;
-}
-
-/* Search Button */
-.search-btn:hover {
-  background: #6d28d9; /* Deeper purple */
-  transform: scale(1.05);
-}
-
-/* Navigation Icons (Account, Wishlist, Cart) */
-.nav-icons a:hover {
-  color: #7c3aed;
-  transform: translateY(-2px);
-}
-
-/* Category Items - underline and color */
-.cat-item {
-  position: relative;
-}
-
-.cat-item:after {
-  content: '';
   position: absolute;
-  width: 0;
-  height: 2px;
-  bottom: -4px;
-  left: 0;
-  background-color: #7c3aed;
-  transition: width 0.3s ease;
+  top: -8px;
+  right: -6px;
+  background: var(--accent-color);
+  /* Corrected from accent-red to accent-color */
+  color: #7f1d1d;
+  font-size: 10px;
+  font-weight: 700;
+  height: 18px;
+  min-width: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid var(--white);
+}
+
+/* Categories Bar */
+.categories-bar {
+  border-top: 1px solid #e5e7eb;
+  background: var(--white);
+}
+
+.categories-flex {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 48px;
+}
+
+.all-categories {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: var(--text-dark);
+  cursor: pointer;
+  padding-right: 30px;
+  border-right: 1px solid #e5e7eb;
+  height: 100%;
+  margin-right: 20px;
+}
+
+.cat-links {
+  display: flex;
+  gap: 30px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.cat-links::-webkit-scrollbar {
+  display: none;
+}
+
+.cat-item {
+  text-decoration: none;
+  color: var(--text-light);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color 0.2s;
 }
 
 .cat-item:hover {
-  color: #7c3aed;
-}
-
-.cat-item:hover:after {
-  width: 100%;
+  color: var(--primary-dark);
 }
