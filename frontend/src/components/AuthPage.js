@@ -2,8 +2,18 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaGoogle, FaFacebookF, FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash } from 'react-icons/fa';
 import './AuthPage.css';
+import { useNavigate } from "react-router-dom";
+
 
 const AuthPage = () => {
+    const [name, setName] = useState("");
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+const [error, setError] = useState("");
+const [success, setSuccess] = useState("");
+const [acceptedTerms, setAcceptedTerms] = useState(false);
+const navigate = useNavigate();
+
     const [isLogin, setIsLogin] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
 
@@ -41,6 +51,70 @@ const AuthPage = () => {
             transition: { duration: 0.8, ease: "easeOut", staggerChildren: 0.2 }
         }
     };
+const handleSignup = async (e) => {
+  e.preventDefault();
+  setError("");
+  setSuccess("");
+     if (!acceptedTerms) {
+    setError("Please accept Terms & Privacy Policy");
+    return;
+  }
+  try {
+    const res = await fetch("http://localhost:5000/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password })
+    });
+
+    const data = await res.json();
+   
+
+    if (!res.ok) {
+      setError(data.message);
+    } else {
+      setSuccess(data.message);
+      setIsLogin(true); // switch to login
+    }
+  } catch (err) {
+    setError("Server not reachable");
+  }
+};
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setError("");
+  setSuccess("");
+
+  try {
+    const res = await fetch("http://localhost:5000/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    // ✅ safely read response
+    let data = {};
+    try {
+      data = await res.json();
+    } catch {
+      throw new Error("Invalid server response");
+    }
+
+    if (!res.ok) {
+      setError(data.message || "Invalid email or password");
+      return;
+    }
+
+    // ✅ success
+    localStorage.setItem("user", JSON.stringify(data.user));
+
+    setSuccess("Login successful");
+    navigate("/home"); // Redirect to home page
+
+  } catch (err) {
+    setError("Backend server not running (port 5000)");
+  }
+};
+
 
     return (
         <div className="auth-container">
@@ -119,12 +193,17 @@ const AuthPage = () => {
                                     <p className="form-subtitle">Login to continue shopping</p>
                                 </motion.div>
 
-                                <form onSubmit={(e) => e.preventDefault()}>
+                                <form onSubmit={handleLogin}>
                                     <motion.div variants={itemVariants} className="input-group">
                                         <label>Email Address</label>
                                         <div className="input-wrapper">
                                             <FaEnvelope className="input-icon" />
-                                            <input type="email" placeholder="email@example.com" />
+                                            <input
+                                                type="email"
+                                                placeholder="email@example.com"
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                            />
                                         </div>
                                     </motion.div>
 
@@ -133,8 +212,10 @@ const AuthPage = () => {
                                         <div className="input-wrapper">
                                             <FaLock className="input-icon" />
                                             <input
-                                                type={showPassword ? "text" : "password"}
+                                                 type={showPassword ? "text" : "password"}
                                                 placeholder="Enter your password"
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
                                             />
                                             <button
                                                 type="button"
@@ -153,6 +234,8 @@ const AuthPage = () => {
                                         </label>
                                         <a href="/" className="forgot-password">Forgot Password?</a>
                                     </motion.div>
+                                   {error && <p className="error-text">{error}</p>}
+                                {success && <p className="success-text">{success}</p>}
 
                                     <motion.button
                                         variants={itemVariants}
@@ -179,12 +262,18 @@ const AuthPage = () => {
                                     <p className="form-subtitle">Sign up to start shopping</p>
                                 </motion.div>
 
-                                <form onSubmit={(e) => e.preventDefault()}>
+                                <form onSubmit={handleSignup}>
+
                                     <motion.div variants={itemVariants} className="input-group">
                                         <label>Full Name</label>
                                         <div className="input-wrapper">
                                             <FaUser className="input-icon" />
-                                            <input type="text" placeholder="Name" />
+                                            <input
+                                                type="text"
+                                                placeholder="Name"
+                                                value={name}
+                                                onChange={(e) => setName(e.target.value)}
+                                            />
                                         </div>
                                     </motion.div>
 
@@ -192,7 +281,7 @@ const AuthPage = () => {
                                         <label>Email Address</label>
                                         <div className="input-wrapper">
                                             <FaEnvelope className="input-icon" />
-                                            <input type="email" placeholder="email@example.com" />
+                                            <input type="email" placeholder="email@example.com"   value={email}  onChange={(e) => setEmail(e.target.value)}/>
                                         </div>
                                     </motion.div>
 
@@ -202,7 +291,7 @@ const AuthPage = () => {
                                             <FaLock className="input-icon" />
                                             <input
                                                 type={showPassword ? "text" : "password"}
-                                                placeholder="Create a strong password"
+                                                placeholder="Create a strong password" value={password} onChange={(e) => setPassword(e.target.value)}
                                             />
                                             <button
                                                 type="button"
@@ -217,10 +306,12 @@ const AuthPage = () => {
 
                                     <motion.div variants={itemVariants} className="form-actions checkbox-only">
                                         <label className="terms-check">
-                                            <input type="checkbox" />
+                                            <input type="checkbox" onChange={(e) => setAcceptedTerms(e.target.checked)}/>
                                             I agree to the <a href="/">Terms of Service</a> and <a href="/">Privacy Policy</a>
                                         </label>
                                     </motion.div>
+                                    {error && <p className="error-text">{error}</p>}
+                                    {success && <p className="success-text">{success}</p>}
 
                                     <motion.button
                                         variants={itemVariants}
