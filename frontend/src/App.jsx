@@ -13,6 +13,7 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/admin" element={<AuthPage />} />
         <Route path="/" element={<AuthPage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/product/:id" element={<ProductDetailPage />} />

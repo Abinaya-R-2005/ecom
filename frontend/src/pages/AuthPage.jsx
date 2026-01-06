@@ -82,6 +82,8 @@ const handleSignup = async (e) => {
 };
 const handleLogin = async (e) => {
   e.preventDefault();
+
+  // ✅ clear old messages FIRST
   setError("");
   setSuccess("");
 
@@ -92,26 +94,29 @@ const handleLogin = async (e) => {
       body: JSON.stringify({ email, password })
     });
 
-    // ✅ safely read response
-    let data = {};
-    try {
-      data = await res.json();
-    } catch {
-      throw new Error("Invalid server response");
-    }
+    const data = await res.json();
 
     if (!res.ok) {
+      setSuccess(""); // ✅ clear success if any
       setError(data.message || "Invalid email or password");
       return;
     }
 
-    // ✅ success
+    // ✅ login success
     localStorage.setItem("user", JSON.stringify(data.user));
 
+    setError(""); // ✅ clear error
     setSuccess("Login successful");
-    navigate("/home"); // Redirect to home page
+
+    // admin email check (NO role based)
+    if (data.user.email === "admin@gmail.com") {
+      navigate("/admin");
+    } else {
+      navigate("/home");
+    }
 
   } catch (err) {
+    setSuccess(""); // ✅ clear success
     setError("Backend server not running (port 5000)");
   }
 };

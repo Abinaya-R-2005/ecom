@@ -8,12 +8,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// -------------------- CONFIG --------------------
+const ADMIN_EMAIL = "admin@gmail.com";
+
 // -------------------- MongoDB --------------------
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch(err => console.log(err));
 
-// -------------------- User Schema --------------------
+// -------------------- USER SCHEMA --------------------
 const userSchema = new mongoose.Schema({
   name: String,
   email: { type: String, unique: true },
@@ -22,27 +25,44 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-// -------------------- Order Schema --------------------
+// -------------------- CATEGORY SCHEMA --------------------
+const categorySchema = new mongoose.Schema({
+  name: { type: String, unique: true }
+});
+
+const Category = mongoose.model("Category", categorySchema);
+
+// -------------------- PRODUCT SCHEMA --------------------
+const productSchema = new mongoose.Schema({
+  name: String,
+  category: String,
+  price: Number,
+  description: String,
+  image: String
+});
+
+const Product = mongoose.model("Product", productSchema);
+
+// -------------------- ORDER SCHEMA --------------------
 const orderSchema = new mongoose.Schema({
   productName: String,
-  productId: Number,
-  size: String,
+  productId: String,
   quantity: Number,
   price: Number,
   userEmail: String,
   userName: String,
-  timestamp: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now }
 });
 
-const Cart = mongoose.model("Cart", orderSchema, "cart");
+const Order = mongoose.model("Order", orderSchema);
 
+// ==================== AUTH ====================
 
-// -------------------- SIGNUP --------------------
+// ---------- SIGNUP ----------
 app.post("/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // 🔐 Validations
     if (!email.endsWith("@gmail.com")) {
       return res.status(400).json({ message: "Email must end with @gmail.com" });
     }
@@ -65,13 +85,12 @@ app.post("/signup", async (req, res) => {
     });
 
     res.json({ message: "Signup successful" });
-
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 });
 
-// -------------------- LOGIN --------------------
+// ---------- LOGIN ----------
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -86,13 +105,16 @@ app.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    // ✅ NO JWT
+    // 👑 Admin check by email only
+    const isAdmin = email === ADMIN_EMAIL;
+
     res.json({
       message: "Login successful",
       user: {
         id: user._id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        isAdmin
       }
     });
 
@@ -100,37 +122,120 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-
-// -------------------- ORDERS --------------------
-app.post("/orders", async (req, res) => {
+app.post("/create-admin", async (req, res) => {
   try {
-    const { productName, productId, size, quantity, price, userEmail, userName } = req.body;
+    const email = "admin@gmail.com";
+    const password = "admin123";
 
-    if (!userEmail) {
-      return res.status(400).json({ message: "User email is required" });
+    const existing = await User.findOne({ email });
+    if (existing) {
+      return res.json({ message: "Admin already exists" });
     }
 
-    const newOrder = await Cart.create({
-      productName,
-      productId,
-      size,
-      quantity,
-      price,
-      userEmail,
-      userName
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await User.create({
+      name: "Admin",
+      email,
+      password: hashedPassword
     });
 
-    res.json({ message: "Order placed successfully", order: newOrder });
+    res.json({ message: "Admin created successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
+// ==================== ADMIN APIs ====================
+
+// ---------- ADD CATEGORY ----------
+app.post("/admin/category", async (req, res) => {
+  try {
+    const { name, email } = req.body;
+
+    if (email !== ADMIN_EMAIL) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    const category = await Category.create({ name });
+    res.json({ message: "Category added", category });
   } catch (error) {
-    console.error("Order error:", error);
+    res.status(500).json({ message: "Failed to add category" });
+  }
+});
+
+// ---------- GET CATEGORIES ----------
+app.get("/categories", async (req, res) => {
+  const categories = await Category.find();
+  res.json(categories);
+});
+
+// ---------- ADD PRODUCT ----------
+app.post("/admin/product", async (req, res) => {
+  try {
+    const { email, name, category, price, description, image } = req.body;
+
+    if (email !== ADMIN_EMAIL) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    const product = await Product.create({
+      name,
+      category,
+      price,
+      description,
+      image
+    });
+
+    res.json({ message: "Product added", product });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to add product" });
+  }
+});
+
+// ---------- GET PRODUCTS ----------
+app.get("/products", async (req, res) => {
+  const products = await Product.find();
+  res.json(products);
+});
+
+// ==================== ORDERS ====================
+
+// ---------- PLACE ORDER ----------
+app.post("/orders", async (req, res) => {
+  try {
+    const order = await Order.create(req.body);
+    res.json({ message: "Order placed", order });
+  } catch (error) {
     res.status(500).json({ message: "Failed to place order" });
   }
 });
 
+// ---------- ADMIN SALES FILTER ----------
+app.get("/admin/sales", async (req, res) => {
+  try {
+    const { email, startDate, endDate } = req.query;
 
+    if (email !== ADMIN_EMAIL) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
 
-// -------------------- SERVER --------------------
+    const filter = {};
+    if (startDate && endDate) {
+      filter.createdAt = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate)
+      };
+    }
+
+    const orders = await Order.find(filter);
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch sales" });
+  }
+});
+
+// ==================== SERVER ====================
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });
