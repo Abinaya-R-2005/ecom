@@ -1,0 +1,262 @@
+/* src/components/hero.css */
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 20px;
+  gap: 40px;
+}
+
+/* LEFT SIDE */
+.hero-left {
+  flex: 1;
+  text-align: left;
+}
+
+.badge {
+  background: #eef2ff;
+  color: #4f46e5;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  display: inline-block;
+}
+
+.hero-left h1 {
+  font-size: 68px;
+  font-weight: 900;
+  line-height: 1.1;
+  color: #111827;
+  margin-bottom: 25px;
+}
+
+.hero-left h1 span {
+  color: #7c3aed;
+}
+
+.hero-left p {
+  font-size: 18px;
+  color: #6b7280;
+  margin-bottom: 40px;
+  line-height: 1.6;
+  max-width: 500px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 60px;
+}
+
+.primary-btn {
+  background: #7c3aed;
+  color: white;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+}
+
+.secondary-btn {
+  background: white;
+  border: 1px solid #e5e7eb;
+  color: #111827;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.stats {
+  display: flex;
+  gap: 60px;
+}
+
+.stats h3 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.stats p {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+/* RIGHT SIDE - THE BENTO BOX */
+.hero-right {
+  flex: 1.2;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.featured-card {
+  background: #FFD200; /* Exact Yellow from Image 1 */
+  border-radius: 30px;
+  width: 100%;
+  height: 480px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.featured-img {
+  width: 85%;
+  height: auto;
+  transform: rotate(-5deg); /* Subtle tilt like Figma */
+  filter: drop-shadow(0 20px 30px rgba(0,0,0,0.1));
+}
+
+/* INTERNAL OFFER CARD */
+.offer-card {
+  position: absolute;
+  bottom: 25px;
+  left: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 15px 25px;
+  border-radius: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.offer-text strong {
+  font-size: 18px;
+  color: #111827;
+  display: block;
+}
+
+.offer-text p {
+  color: #6b7280;
+  font-size: 14px;
+  margin: 0;
+}
+
+.shop-btn {
+  background: #7c3aed;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+/* Stats Row Alignment */
+.stats {
+  display: flex; /* Aligns items in a row */
+  gap: 60px; /* Provides the wide spacing seen in Figma */
+  margin-top: 40px; /* Space between buttons and stats */
+}
+
+.stats div {
+  display: flex;
+  flex-direction: column; /* Stacks the number above the label */
+  align-items: flex-start; /* Aligns text to the left */
+}
+
+.stats h3 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.stats p {
+  font-size: 14px;
+  color: #9ca3af;
+  margin: 4px 0 0 0;
+}
+.hero-buttons {
+  display: flex;
+  gap: 16px; /* Space between the two buttons */
+  margin-bottom: 50px;
+}
+
+.primary-btn {
+  background: #7c3aed;
+  color: white;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space for the arrow */
+}
+
+.secondary-btn {
+  background: white;
+  border: 1px solid #e5e7eb;
+  color: #111827;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-weight: 700;
+}
+/* Button Transitions */
+.primary-btn, .secondary-btn, .shop-btn {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy classic feel */
+}
+
+/* Primary Button - Elevation and Shadow */
+.primary-btn:hover {
+  background: #6d28d9;
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(124, 58, 237, 0.3);
+}
+
+/* Secondary Button - Subtle border change */
+.secondary-btn:hover {
+  background: #f9fafb;
+  border-color: #111827;
+  transform: translateY(-2px);
+}
+
+/* The Yellow Bento Box Interaction */
+.featured-card {
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.featured-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+}
+
+/* The Image inside the card - move it slightly */
+.featured-card:hover .featured-img {
+  transform: rotate(-2deg) scale(1.05); /* Straightens slightly on hover */
+  transition: transform 0.6s ease;
+}
+
+/* Floating Offer Card Inside */
+.offer-card {
+  transition: all 0.4s ease;
+}
+
+.featured-card:hover .offer-card {
+  bottom: 35px; /* Moves up slightly */
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+/* Inner Shop Button */
+.shop-btn:hover {
+  background: #111827; /* Contrast flip */
+  transform: scale(1.05);
+}
+
+/* Stats Hover - subtle color pop */
+.stats div:hover h3 {
+  color: #7c3aed;
+  transition: color 0.3s ease;
+}

@@ -1,0 +1,175 @@
+/* src/components/Header.css */
+
+.sh-header {
+  background: #fff;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+}
+
+.top-banner {
+  background: #7c3aed; /* The ShopHub Purple */
+  color: #fff;
+  padding: 8px 0;
+  font-size: 13px;
+}
+
+.banner-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.top-links span {
+  margin-left: 20px;
+  cursor: pointer;
+}
+
+.main-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: 800;
+  color: #7c3aed;
+  text-decoration: none;
+}
+
+.logo span {
+  color: #111827;
+}
+
+.search-bar {
+  flex: 0.6;
+  display: flex;
+  background: #f3f4f6;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.search-bar input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 10px 15px;
+  outline: none;
+}
+
+.search-btn {
+  background: #7c3aed;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0 15px;
+  cursor: pointer;
+}
+
+.nav-icons {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+.nav-icons a {
+  text-decoration: none;
+  color: #374151;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.cart-badge {
+  background: #7c3aed;
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: -8px;
+  vertical-align: top;
+}
+
+.categories {
+  display: flex;
+  justify-content: flex-start;
+  gap: 30px;
+  padding: 15px 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.cat-item {
+  font-size: 14px;
+  color: #4b5563;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.cat-item:hover {
+  color: #7c3aed;
+}
+/* Smooth Transitions for all interactive elements */
+.top-links span, 
+.search-btn, 
+.nav-icons a, 
+.cat-item {
+  transition: all 0.3s ease;
+}
+
+/* Top Banner Links */
+.top-links span:hover {
+  color: #eef2ff;
+  text-decoration: underline;
+}
+
+/* Logo Hover - slight shift */
+.logo:hover {
+  opacity: 0.9;
+}
+
+/* Search Button */
+.search-btn:hover {
+  background: #6d28d9; /* Deeper purple */
+  transform: scale(1.05);
+}
+
+/* Navigation Icons (Account, Wishlist, Cart) */
+.nav-icons a:hover {
+  color: #7c3aed;
+  transform: translateY(-2px);
+}
+
+/* Category Items - underline and color */
+.cat-item {
+  position: relative;
+}
+
+.cat-item:after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #7c3aed;
+  transition: width 0.3s ease;
+}
+
+.cat-item:hover {
+  color: #7c3aed;
+}
+
+.cat-item:hover:after {
+  width: 100%;
+}
