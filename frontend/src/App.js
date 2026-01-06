@@ -11,21 +11,22 @@ function App() {
 
   return (
     <Router>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<AuthPage />} />
-          <Route path="/checkout" element={
-            <div className="checkout-page-view">
-               <Checkout onPlaceOrder={() => setIsOrderPlaced(true)} />
-               <OrderSuccess 
-                  isOpen={isOrderPlaced} 
-                  onClose={() => setIsOrderPlaced(false)} 
-               />
-            </div>
-          } />
-        </Routes>
-      </div>
+      <Routes>
+         <Route path="/" element={<AuthPage />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route
+          path="/checkout"
+          element={
+            <>
+              <Checkout onPlaceOrder={() => setIsOrderPlaced(true)} />
+              <OrderSuccess
+                isOpen={isOrderPlaced}
+                onClose={() => setIsOrderPlaced(false)}
+              />
+            </>
+          }
+        />
+      </Routes>
     </Router>
   );
 }
