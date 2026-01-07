@@ -75,6 +75,20 @@ const cartSchema = new mongoose.Schema({
 
 const Cart = mongoose.model("Cart", cartSchema);
 
+// -------------------- REVIEW SCHEMA --------------------
+const reviewSchema = new mongoose.Schema({
+  productId: Number,
+  userEmail: String,
+  userName: String,
+  rating: { type: Number, required: true },
+  comment: String,
+  images: [String],
+  createdAt: { type: Date, default: Date.now }
+});
+
+const Review = mongoose.model("Review", reviewSchema);
+
+
 
 // -------------------- IMAGE UPLOAD CONFIG --------------------
 const storage = multer.diskStorage({
@@ -356,7 +370,41 @@ app.delete("/cart/:email", async (req, res) => {
   }
 });
 
-// UPDATE CATEGORY
+// ==================== REVIEWS ====================
+
+// ---------- GET REVIEWS ----------
+app.get("/reviews/:productId", async (req, res) => {
+  try {
+    const reviews = await Review.find({ productId: req.params.productId }).sort({ createdAt: -1 });
+    res.json(reviews);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch reviews" });
+  }
+});
+
+// ---------- SUBMIT REVIEW ----------
+app.post("/reviews", upload.array("images", 5), async (req, res) => {
+  try {
+    const { productId, userEmail, userName, rating, comment } = req.body;
+
+    const imageUrls = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
+
+    const review = await Review.create({
+      productId: Number(productId),
+      userEmail,
+      userName,
+      rating: Number(rating),
+      comment,
+      images: imageUrls
+    });
+
+    res.json({ message: "Review submitted", review });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to submit review" });
+  }
+});
+
 app.put("/admin/category/:id", async (req, res) => {
   const { email, name } = req.body;
   if (email !== ADMIN_EMAIL) return res.status(403).json({ message: "No access" });
