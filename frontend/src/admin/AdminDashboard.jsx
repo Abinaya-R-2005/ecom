@@ -6,10 +6,18 @@ import "./AdminDashboard.css";
 const AdminDashboard = () => {
   const navigate = useNavigate();
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/");
+  };
+
   return (
     <div className="admin-page">
       <div className="admin-card">
-        <h2 className="admin-title">Admin Dashboard</h2>
+        <div className="admin-header">
+          <h2 className="admin-title">Admin Dashboard</h2>
+          <button className="logout-btn" onClick={handleLogout}>Logout</button>
+        </div>
 
         <div className="admin-actions">
           <button onClick={() => navigate("/admin/add-category")}>
@@ -20,11 +28,10 @@ const AdminDashboard = () => {
           </button>
         </div>
 
-       
+
       </div>
     </div>
   );
 };
 
 export default AdminDashboard;
- 

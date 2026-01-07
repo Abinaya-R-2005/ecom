@@ -8,20 +8,28 @@
 }
 
 .back-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: none;
-  border: none;
+  background: white;
+  border: 1px solid #e5e7eb;
+  padding: 10px 20px;
+  border-radius: 50px;
   font-weight: 600;
-  color: #333;
+  color: #374151;
   cursor: pointer;
-  margin-bottom: 20px;
-  transition: color 0.2s;
+  margin-bottom: 24px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .back-btn:hover {
-  color: #ff4757;
+  background: #f9fafb;
+  color: #7c3aed;
+  /* Purple accent */
+  transform: translateX(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #7c3aed;
 }
 
 .detail-grid {
@@ -31,7 +39,7 @@
   background: white;
   padding: 40px;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 .product-image-section img {
@@ -63,8 +71,13 @@
   margin-bottom: 20px;
 }
 
-.star-filled { color: #ffa502; }
-.star-empty { color: #dfe4ea; }
+.star-filled {
+  color: #ffa502;
+}
+
+.star-empty {
+  color: #dfe4ea;
+}
 
 .detail-price {
   margin-bottom: 25px;
@@ -180,6 +193,7 @@
   align-items: center;
   gap: 10px;
 }
+
 /* BUY NOW BUTTON */
 .buy-now-btn {
   display: flex;

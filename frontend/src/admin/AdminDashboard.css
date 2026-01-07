@@ -19,11 +19,35 @@
 }
 
 /* title */
+/* refined title header */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
 .admin-title {
-  text-align: center;
   font-size: 28px;
   color: #6d28d9;
-  margin-bottom: 25px;
+  margin: 0;
+}
+
+/* logout btn */
+.logout-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
 }
 
 /* buttons */
