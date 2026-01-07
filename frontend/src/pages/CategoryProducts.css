@@ -19,7 +19,7 @@
   border-radius: 10px;
   padding: 15px;
   text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .product-card img {
@@ -27,4 +27,20 @@
   height: 160px;
   object-fit: cover;
   border-radius: 8px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 15px;
+  }
+
+  .category-page {
+    padding: 15px;
+  }
+
+  .product-card img {
+    height: 140px;
+  }
 }

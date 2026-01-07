@@ -78,3 +78,32 @@
 .admin-sales {
   margin-top: 20px;
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .admin-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  .logout-btn {
+    width: 100%;
+  }
+
+  .admin-actions {
+    flex-direction: column;
+  }
+
+  .admin-actions button {
+    width: 100%;
+  }
+
+  .admin-page {
+    padding: 10px;
+  }
+
+  .admin-card {
+    padding: 15px;
+  }
+}

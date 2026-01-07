@@ -23,12 +23,14 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = async (product) => {
     // Optimistic update
-    const newCartItem = { ...product, productId: product.id, qty: 1 };
+    const pid = product._id || product.id;
+    const newCartItem = { ...product, productId: pid, qty: 1 };
+
     setCart(prev => {
-      const exists = prev.find(p => p.productId === product.id);
+      const exists = prev.find(p => p.productId === pid);
       if (exists) {
         return prev.map(p =>
-          p.productId === product.id ? { ...p, qty: p.qty + 1 } : p
+          p.productId === pid ? { ...p, qty: p.qty + 1 } : p
         );
       }
       return [...prev, newCartItem];
@@ -42,10 +44,10 @@ export const CartProvider = ({ children }) => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             userEmail,
-            productId: product.id,
+            productId: pid,
             name: product.name,
             price: product.price,
-            img: product.img,
+            img: product.img || product.image,
             qty: 1
           })
         });
@@ -76,7 +78,7 @@ export const CartProvider = ({ children }) => {
     }
 
     setCart(prev =>
-      prev.map(p => (Number(p.productId) === Number(id) ? { ...p, qty: Number(newQty) } : p))
+      prev.map(p => (String(p.productId) === String(id) ? { ...p, qty: Number(newQty) } : p))
     );
 
 

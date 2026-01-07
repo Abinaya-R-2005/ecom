@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaHeart, FaEye, FaShoppingCart } from "react-icons/fa";
+import { FaHeart, FaEye, FaShoppingCart, FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useWishlist } from "../context/WishlistContext";
 import { useCart } from "../context/CartContext";
@@ -63,6 +63,19 @@ const ProductCard = ({ product }) => {
 
       <div className="card-info">
         <h4>{product.name}</h4>
+
+        {/* 🌟 Star Rating Display */}
+        <div className="rating-container" style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '5px' }}>
+          <div className="stars" style={{ color: '#fbbf24', display: 'flex' }}>
+            {[...Array(5)].map((_, i) => (
+              <FaStar key={i} size={14} color={i < Math.round(product.averageRating || 0) ? "#fbbf24" : "#e5e7eb"} />
+            ))}
+          </div>
+          <span style={{ fontSize: '0.8rem', color: '#666' }}>
+            ({product.ratingCount || 0})
+          </span>
+        </div>
+
         <p>₹{product.price}</p>
 
         <button className="add-cart-full" onClick={handleAddToCart}>

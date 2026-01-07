@@ -43,7 +43,9 @@ const productSchema = new mongoose.Schema({
   category: String,
   price: Number,
   description: String,
-  image: String
+  image: String,
+  averageRating: { type: Number, default: 0 },
+  ratingCount: { type: Number, default: 0 }
 });
 
 const Product = mongoose.model("Product", productSchema);
@@ -77,7 +79,7 @@ const Cart = mongoose.model("Cart", cartSchema);
 
 // -------------------- REVIEW SCHEMA --------------------
 const reviewSchema = new mongoose.Schema({
-  productId: Number,
+  productId: String,
   userEmail: String,
   userName: String,
   rating: { type: Number, required: true },
@@ -241,11 +243,45 @@ app.post("/admin/product", upload.single("image"), async (req, res) => {
   }
 });
 
+// ---------- DELETE PRODUCT ----------
+app.delete("/admin/product/:id", async (req, res) => {
+  try {
+    const { email } = req.body; // In a real app, use headers/auth middleware
+
+    // Simple check (in production use proper Auth middleware)
+    if (email !== ADMIN_EMAIL && req.headers['user-email'] !== ADMIN_EMAIL) {
+      // Allow passing email via body OR header for flexibility
+      if (!email && !req.headers['user-email']) {
+        return res.status(403).json({ message: "Not authorized" });
+      }
+    }
+
+    await Product.findByIdAndDelete(req.params.id);
+    // Optional: Delete associated reviews
+    // await Review.deleteMany({ productId: req.params.id }); 
+
+    res.json({ message: "Product deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to delete product" });
+  }
+});
+
 
 // ---------- GET PRODUCTS ----------
 app.get("/products", async (req, res) => {
   const products = await Product.find();
   res.json(products);
+});
+
+// ---------- GET SINGLE PRODUCT ----------
+app.get("/products/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
+  }
 });
 
 // ==================== ORDERS ====================
@@ -257,6 +293,16 @@ app.post("/orders", async (req, res) => {
     res.json({ message: "Order placed", order });
   } catch (error) {
     res.status(500).json({ message: "Failed to place order" });
+  }
+});
+
+// ---------- GET USER ORDERS ----------
+app.get("/orders/:email", async (req, res) => {
+  try {
+    const orders = await Order.find({ userEmail: req.params.email }).sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch orders" });
   }
 });
 // GET PRODUCTS BY CATEGORY
@@ -393,6 +439,7 @@ app.get("/reviews/:productId", async (req, res) => {
 });
 
 // ---------- SUBMIT REVIEW ----------
+// ---------- SUBMIT REVIEW ----------
 app.post("/reviews", upload.array("images", 5), async (req, res) => {
   try {
     const { productId, userEmail, userName, rating, comment } = req.body;
@@ -400,7 +447,7 @@ app.post("/reviews", upload.array("images", 5), async (req, res) => {
     const imageUrls = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
 
     const review = await Review.create({
-      productId: Number(productId),
+      productId: String(productId),
       userEmail,
       userName,
       rating: Number(rating),
@@ -408,7 +455,18 @@ app.post("/reviews", upload.array("images", 5), async (req, res) => {
       images: imageUrls
     });
 
-    res.json({ message: "Review submitted", review });
+    // 🌟 Calculate Average Rating
+    const allReviews = await Review.find({ productId: String(productId) });
+    const totalRating = allReviews.reduce((sum, r) => sum + r.rating, 0);
+    const avgRating = totalRating / allReviews.length;
+
+    // Update Product
+    await Product.findByIdAndUpdate(productId, {
+      averageRating: avgRating.toFixed(1),
+      ratingCount: allReviews.length
+    });
+
+    res.json({ message: "Review submitted", review, avgRating });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to submit review" });

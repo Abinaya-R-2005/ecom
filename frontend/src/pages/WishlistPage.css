@@ -9,8 +9,10 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Vertical Center */
-  align-items: center;     /* Horizontal Center */
+  justify-content: center;
+  /* Vertical Center */
+  align-items: center;
+  /* Horizontal Center */
   padding: 40px 20px;
 }
 
@@ -30,7 +32,8 @@
 .wishlist-icon-wrapper {
   width: 100px;
   height: 100px;
-  background: #fdf2f8; /* Very soft pink */
+  background: #fdf2f8;
+  /* Very soft pink */
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -45,9 +48,17 @@
 }
 
 @keyframes heartPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.15); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.15);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* Typography & Spacing */
@@ -62,7 +73,8 @@
 .empty-subtitle {
   font-size: 16px;
   color: #64748b;
-  line-height: 1.8; /* Proper line spacing */
+  line-height: 1.8;
+  /* Proper line spacing */
   margin-bottom: 40px;
 }
 
@@ -70,7 +82,8 @@
 .classic-browse-btn {
   display: inline-block;
   padding: 18px 40px;
-  background: #7c3aed; /* Your brand purple */
+  background: #7c3aed;
+  /* Your brand purple */
   color: #fff;
   border-radius: 16px;
   text-decoration: none;
@@ -98,4 +111,19 @@
 .page-title span {
   color: #7c3aed;
   font-weight: 400;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+  .empty-wishlist-card {
+    padding: 30px 20px;
+  }
+
+  .empty-title {
+    font-size: 24px;
+  }
+
+  .wishlist-main {
+    padding: 20px;
+  }
 }

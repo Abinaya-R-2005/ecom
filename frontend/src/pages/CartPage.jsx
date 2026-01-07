@@ -54,8 +54,11 @@ const CartPage = () => {
             <div className="cart-items-column">
               {cart.map((item) => {
                 // ✅ IMAGE FIX (NO other file touched)
-                const imageSrc =
-                  item.img || item.image || "https://via.placeholder.com/120";
+                // ✅ IMAGE FIX: Handle relative paths from backend
+                let imageSrc = item.img || item.image || "https://via.placeholder.com/120";
+                if (imageSrc.startsWith("/")) {
+                  imageSrc = `http://localhost:5000${imageSrc}`;
+                }
 
                 return (
                   <div key={item.productId} className="cart-product-card">

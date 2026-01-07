@@ -51,7 +51,9 @@
   object-fit: cover;
 }
 
-.product-details { flex: 1; }
+.product-details {
+  flex: 1;
+}
 
 .product-header {
   display: flex;
@@ -59,7 +61,10 @@
   align-items: flex-start;
 }
 
-.product-header h3 { font-size: 18px; font-weight: 700; }
+.product-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+}
 
 /* Black Dustbin Visibility */
 .delete-btn {
@@ -121,6 +126,7 @@
   margin-bottom: 12px;
   font-weight: 500;
 }
+
 /* Better spacing for Order Summary rows */
 .summary-card {
   display: flex;
@@ -128,8 +134,10 @@
 }
 
 .summary-row {
-  padding: 14px 0;          /* vertical spacing */
-  line-height: 0.8;         /* better text breathing */
+  padding: 14px 0;
+  /* vertical spacing */
+  line-height: 0.8;
+  /* better text breathing */
 }
 
 .summary-row.total {
@@ -148,8 +156,16 @@
   border-top: 1px solid #e2e8f0;
 }
 
-.total { font-size: 22px; font-weight: 800; color: #1e293b; }
-.free-text { color: #10b981; font-weight: 700; }
+.total {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.free-text {
+  color: #10b981;
+  font-weight: 700;
+}
 
 .checkout-full-btn {
   width: 100%;
@@ -162,11 +178,12 @@
   margin-top: 20px;
   cursor: pointer;
 }
+
 /* Layout & Centering */
 .cart-page-wrapper {
   background-color: #f8fafc;
   /* Full viewport height minus header estimated height */
-  min-height: 100vh; 
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -175,7 +192,8 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 20px;
-  flex: 1; /* Allows container to grow to fill space */
+  flex: 1;
+  /* Allows container to grow to fill space */
   width: 100%;
 }
 
@@ -184,7 +202,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* Vertical center */
+  justify-content: center;
+  /* Vertical center */
   text-align: center;
 }
 
@@ -227,9 +246,29 @@
 }
 
 /* Rest of your existing CSS remains the same... */
-.cart-grid {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 30px;
+/* Mobile Responsiveness */
+@media (max-width: 900px) {
+  .cart-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .product-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cart-product-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .qty-controls {
+    margin: 0 auto;
+  }
+
+  .summary-card {
+    position: static;
+    /* No sticky on mobile */
+  }
 }
-/* ... etc ... */

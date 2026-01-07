@@ -26,6 +26,12 @@ const AdminDashboard = () => {
           <button onClick={() => navigate("/admin/add-product")}>
             Add Product
           </button>
+          <button onClick={() => navigate("/admin/remove-product")} style={{ background: "#ef4444" }}>
+            Remove Product
+          </button>
+          <button onClick={() => navigate("/admin/orders")} style={{ background: "#3b82f6" }}>
+            Placed Orders
+          </button>
         </div>
 
 

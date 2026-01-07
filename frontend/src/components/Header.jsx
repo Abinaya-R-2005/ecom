@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   FaSearch,
@@ -7,7 +7,9 @@ import {
   FaShoppingCart,
   FaBars,
   FaMapMarkerAlt,
-  FaSignOutAlt
+  FaSignOutAlt,
+  FaBoxOpen,
+  FaTimes // Added close icon
 } from "react-icons/fa";
 import "./Header.css";
 import { useWishlist } from "../context/WishlistContext";
@@ -15,6 +17,7 @@ import { useCart } from "../context/CartContext";
 
 const Header = ({ onSearch }) => {
   const [showCategories, setShowCategories] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -25,14 +28,14 @@ const Header = ({ onSearch }) => {
 
   const { wishlist } = useWishlist();
   const { cart } = useCart(); // ✅ cart count
-useEffect(() => {
-  fetch("http://localhost:5000/categories")
-    .then((res) => res.json())
-    .then((data) => {
-      setCategories(data);
-    })
-    .catch((err) => console.error("Error fetching categories:", err));
-}, []);
+  useEffect(() => {
+    fetch("http://localhost:5000/categories")
+      .then((res) => res.json())
+      .then((data) => {
+        setCategories(data);
+      })
+      .catch((err) => console.error("Error fetching categories:", err));
+  }, []);
 
   return (
     <header className="sh-header">
@@ -57,44 +60,59 @@ useEffect(() => {
       <div className="main-nav container">
         <Link to="/home" className="logo-brand">ShopHub</Link>
 
-        <div className="search-bar">
-          <input
-            type="text"
-            placeholder="Search for products..."
-            onChange={(e) => onSearch && onSearch(e.target.value)}
-          />
-          <button className="search-btn">
-            <FaSearch />
-          </button>
+        <div className="mobile-toggle" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
         </div>
 
-        <div className="nav-icons">
-          <Link to="/login" className="icon-link">
-            <FaUser />
-          </Link>
+        <div className={`nav-content ${isMobileMenuOpen ? "open" : ""}`}>
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder="Search for products..."
+              onChange={(e) => onSearch && onSearch(e.target.value)}
+            />
+            <button className="search-btn">
+              <FaSearch />
+            </button>
+          </div>
 
-          {/* ❤️ Wishlist */}
-          <Link to="/wishlist" className="icon-link">
-            <FaHeart />
-            {wishlist.length > 0 && (
-              <span className="cart-badge">{wishlist.length}</span>
-            )}
-          </Link>
+          <div className="nav-icons">
+            <Link to="/login" className="icon-link" onClick={() => setIsMobileMenuOpen(false)}>
+              <FaUser />
+              <span className="mobile-label">Login</span>
+            </Link>
 
-          {/* 🛒 Cart */}
-          <Link to="/cart" className="icon-link">
-            <FaShoppingCart />
-            {cart.length > 0 && (
-              <span className="cart-badge">
-                {cart.reduce((sum, i) => sum + i.qty, 0)}
-              </span>
-            )}
-          </Link>
+            <Link to="/orders" className="icon-link" title="My Orders" onClick={() => setIsMobileMenuOpen(false)}>
+              <FaBoxOpen />
+              <span className="mobile-label">Orders</span>
+            </Link>
 
-          {/* 🚪 Logout */}
-          <button onClick={handleLogout} className="icon-link" style={{ background: "none", border: "none", cursor: "pointer" }}>
-            <FaSignOutAlt />
-          </button>
+            {/* ❤️ Wishlist */}
+            <Link to="/wishlist" className="icon-link" onClick={() => setIsMobileMenuOpen(false)}>
+              <FaHeart />
+              {wishlist.length > 0 && (
+                <span className="cart-badge">{wishlist.length}</span>
+              )}
+              <span className="mobile-label">Wishlist</span>
+            </Link>
+
+            {/* 🛒 Cart */}
+            <Link to="/cart" className="icon-link" onClick={() => setIsMobileMenuOpen(false)}>
+              <FaShoppingCart />
+              {cart.length > 0 && (
+                <span className="cart-badge">
+                  {cart.reduce((sum, i) => sum + i.qty, 0)}
+                </span>
+              )}
+              <span className="mobile-label">Cart</span>
+            </Link>
+
+            {/* 🚪 Logout */}
+            <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} className="icon-link" style={{ background: "none", border: "none", cursor: "pointer" }}>
+              <FaSignOutAlt />
+              <span className="mobile-label">Logout</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -110,15 +128,15 @@ useEffect(() => {
           </div>
 
           <div className="cat-links">
-           {categories.map((cat) => (
+            {categories.map((cat) => (
               <Link
                 key={cat._id}
-    to={`/category/${cat.name}`}
-    className="cat-item"
-  >
-    {cat.name}
-  </Link>
-))}
+                to={`/category/${cat.name}`}
+                className="cat-item"
+              >
+                {cat.name}
+              </Link>
+            ))}
 
           </div>
         </div>

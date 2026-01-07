@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
-import { products } from "../data/products";
+// import { products } from "../data/products"; // Removed static import
 import { FaStar, FaShoppingCart, FaArrowLeft } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
 import "./ProductDetailPage.css";
@@ -11,7 +11,25 @@ const ProductDetailPage = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
 
-  const product = products.find((p) => p.id === parseInt(id));
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch product from API
+  useEffect(() => {
+    fetch(`http://localhost:5000/products/${id}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Product not found");
+        return res.json();
+      })
+      .then((data) => {
+        setProduct(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch product:", err);
+        setLoading(false);
+      });
+  }, [id]);
 
   const [selectedSize, setSelectedSize] = useState("M");
   const [quantity, setQuantity] = useState(1);
@@ -73,6 +91,10 @@ const ProductDetailPage = () => {
         setUserRating(5);
         setUploadImages([]);
         fetchReviews();
+        // Refresh product to update avg rating
+        fetch(`http://localhost:5000/products/${id}`)
+          .then(res => res.json())
+          .then(data => setProduct(data));
       }
     } catch (err) {
       console.error("Failed to submit review:", err);
@@ -104,8 +126,10 @@ const ProductDetailPage = () => {
     }
   };
 
+  if (loading) return <div className="container" style={{ marginTop: '100px' }}>Loading...</div>;
+
   if (!product) {
-    return <div className="container">Product not found</div>;
+    return <div className="container" style={{ marginTop: '100px' }}>Product not found</div>;
   }
 
   return (
@@ -120,7 +144,7 @@ const ProductDetailPage = () => {
         <div className="detail-grid">
           <div className="product-image-section">
             <img
-              src={product.img || "https://via.placeholder.com/600"}
+              src={`http://localhost:5000${product.image}` || "https://via.placeholder.com/600"}
               alt={product.name}
               className="main-detail-img"
             />
@@ -135,25 +159,21 @@ const ProductDetailPage = () => {
                 {[...Array(5)].map((_, i) => (
                   <FaStar
                     key={i}
-                    className={i < 4 ? "star-filled" : "star-empty"}
+                    className={i < Math.round(product.averageRating || 0) ? "star-filled" : "star-empty"}
                   />
                 ))}
               </div>
               <span className="reviews">
-                ({product.reviews || 0} customer reviews)
+                ({product.ratingCount || 0} ratings)
               </span>
             </div>
 
             <div className="detail-price">
               <span className="price">${product.price}</span>
-              {product.oldPrice && (
-                <span className="old-price">${product.oldPrice}</span>
-              )}
             </div>
 
             <p className="detail-description">
-              Elevate your style with this premium quality {product.name.toLowerCase()}.
-              Crafted with comfort and durability in mind.
+              {product.description || `Elevate your style with this premium quality ${product.name.toLowerCase()}. Crafted with comfort and durability in mind.`}
             </p>
 
             <div className="selection-group">

@@ -50,7 +50,8 @@
 }
 
 .step-num {
-    background: #7c3aed; /* Brand Purple */
+    background: #7c3aed;
+    /* Brand Purple */
     color: white;
     width: 32px;
     height: 32px;
@@ -68,7 +69,9 @@
     gap: 20px;
 }
 
-.field.full { grid-column: span 2; }
+.field.full {
+    grid-column: span 2;
+}
 
 .field label {
     display: block;
@@ -122,9 +125,23 @@
     background: #f1f5f9;
 }
 
-.sp-name { font-weight: 700; font-size: 14px; margin: 0; }
-.sp-qty { font-size: 13px; color: #64748b; margin: 2px 0; }
-.sp-price { color: #7c3aed; font-weight: 700; font-size: 14px; }
+.sp-name {
+    font-weight: 700;
+    font-size: 14px;
+    margin: 0;
+}
+
+.sp-qty {
+    font-size: 13px;
+    color: #64748b;
+    margin: 2px 0;
+}
+
+.sp-price {
+    color: #7c3aed;
+    font-weight: 700;
+    font-size: 14px;
+}
 
 .summary-totals {
     border-top: 1px solid #f1f5f9;
@@ -161,8 +178,9 @@
     gap: 10px;
     cursor: pointer;
 }
+
 /* Container for the rows */
-.method-selection-container, 
+.method-selection-container,
 .payment-selection-container {
     display: flex;
     flex-direction: column;
@@ -207,13 +225,15 @@
 /* Active State Styles */
 .method-option.active {
     border-color: #7c3aed;
-    background-color: #ffffff; /* Keeping it white as per design */
+    background-color: #ffffff;
+    /* Keeping it white as per design */
 }
 
 .method-option.active .custom-radio {
     border-color: #7c3aed;
     background-color: #7c3aed;
-    box-shadow: inset 0 0 0 4px white; /* Creates the inner dot effect */
+    box-shadow: inset 0 0 0 4px white;
+    /* Creates the inner dot effect */
 }
 
 /* Text and Labels */
@@ -237,7 +257,8 @@
 }
 
 .method-price.free {
-    color: #10b981; /* Green color for FREE */
+    color: #10b981;
+    /* Green color for FREE */
 }
 
 /* Payment Icons */
@@ -255,6 +276,55 @@
 .payment-form {
     padding: 20px;
     background: white;
-    margin-top: -5px; /* Joins it slightly to the active row above */
+    margin-top: -5px;
+    /* Joins it slightly to the active row above */
 }
-.free { color: #10b981; font-weight: 700; }
+
+.free {
+    color: #10b981;
+    font-weight: 700;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 900px) {
+    .checkout-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-card {
+        position: static;
+    }
+
+    /* Input Grid */
+    .input-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .field.full {
+        grid-column: span 1;
+    }
+
+    /* Method Options */
+    .method-option {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 15px;
+    }
+
+    .method-price {
+        margin-left: 0;
+        width: 100%;
+        text-align: left;
+    }
+
+    .card-icons {
+        margin-left: 0;
+        width: 100%;
+        margin-top: 5px;
+    }
+
+    .checkout-page {
+        padding: 15px 10px;
+    }
+}

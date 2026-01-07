@@ -1,0 +1,150 @@
+.remove-product-page {
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    padding: 40px 20px;
+    font-family: 'Inter', sans-serif;
+}
+
+.rp-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.rp-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 20px;
+}
+
+.rp-header h2 {
+    font-size: 1.5rem;
+    color: #2f3542;
+    margin: 0;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    font-weight: 600;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.back-btn:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.rp-search-bar {
+    display: flex;
+    align-items: center;
+    background: #f3f4f6;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.rp-search-bar:focus-within {
+    background: white;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.rp-search-bar input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    margin-left: 10px;
+    font-size: 1rem;
+    outline: none;
+    color: #374151;
+}
+
+.rp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.rp-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: white;
+    transition: all 0.2s;
+}
+
+.rp-item:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.rp-item-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.rp-item-info img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: #f3f4f6;
+}
+
+.rp-item-info h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: #1f2937;
+}
+
+.rp-item-info p {
+    margin: 4px 0 0;
+    font-size: 0.9rem;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.rp-delete-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fee2e2;
+    color: #ef4444;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.rp-delete-btn:hover {
+    background: #fecaca;
+    transform: translateY(-1px);
+}
+
+.no-results {
+    text-align: center;
+    color: #9ca3af;
+    padding: 40px;
+}

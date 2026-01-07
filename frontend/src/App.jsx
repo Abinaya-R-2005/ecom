@@ -14,6 +14,9 @@ import AuthPage from "./pages/AuthPage";         // ✅ Import Login/Signup Page
 import AdminDashboard from "./admin/AdminDashboard"; // ✅ Import Admin Dashboard
 import AddCategory from "./admin/AddCategory";
 import AddProduct from "./admin/AddProduct";
+import RemoveProductPage from "./admin/RemoveProductPage";
+import AdminOrdersPage from "./admin/AdminOrdersPage";
+import OrdersPage from "./pages/OrdersPage"; // ✅ Import Orders Page
 
 function App() {
   return (
@@ -29,6 +32,7 @@ function App() {
             <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/orders" element={<OrdersPage />} /> {/* ✅ Orders Route */}
             <Route path="/order-success" element={<OrderSuccess />} /> {/* ✅ Success Page */}
             <Route path="/product/:id" element={<ProductDetailPage />} />
 
@@ -37,7 +41,9 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/add-category" element={<AddCategory />} />
             <Route path="/admin/add-product" element={<AddProduct />} />
-            
+            <Route path="/admin/remove-product" element={<RemoveProductPage />} />
+            <Route path="/admin/orders" element={<AdminOrdersPage />} />
+
             {/* Category Products Route */}
             <Route path="/category/:category" element={<CategoryProducts />} />
 

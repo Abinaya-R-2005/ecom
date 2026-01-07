@@ -10,12 +10,15 @@
     background: white;
     padding: 40px;
     border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     text-align: center;
     max-width: 450px;
 }
 
-.main-check-icon { color: #10b981; margin-bottom: 20px; }
+.main-check-icon {
+    color: #10b981;
+    margin-bottom: 20px;
+}
 
 .animation-box {
     background: #f1f5f9;
@@ -34,11 +37,18 @@
     animation: driveBy 3s infinite linear;
 }
 
-.truck-icon { color: #7c3aed; }
+.truck-icon {
+    color: #7c3aed;
+}
 
 @keyframes driveBy {
-    0% { left: -100px; }
-    100% { left: 100%; }
+    0% {
+        left: -100px;
+    }
+
+    100% {
+        left: 100%;
+    }
 }
 
 .btn-primary {
@@ -54,6 +64,7 @@
     gap: 8px;
     margin: 0 auto;
 }
+
 /* Container for the icon to handle the background "pop" */
 .check-container {
     display: flex;
@@ -74,12 +85,16 @@
         transform: scale(0);
         opacity: 0;
     }
+
     60% {
-        transform: scale(1.2); /* Pop slightly larger than normal */
+        transform: scale(1.2);
+        /* Pop slightly larger than normal */
         opacity: 1;
     }
+
     100% {
-        transform: scale(1); /* Settle at normal size */
+        transform: scale(1);
+        /* Settle at normal size */
     }
 }
 
@@ -96,10 +111,19 @@
 }
 
 @keyframes flicker {
-    0% { opacity: 0.2; }
-    50% { opacity: 0.8; }
-    100% { opacity: 0.2; }
+    0% {
+        opacity: 0.2;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0.2;
+    }
 }
+
 .check-container {
     position: relative;
 }
@@ -114,6 +138,36 @@
 }
 
 @keyframes pulse-ring {
-    0% { transform: scale(0.5); opacity: 1; }
-    100% { transform: scale(2); opacity: 0; }
+    0% {
+        transform: scale(0.5);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+
+    0% {
+        transform: scale(0.5);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+    .success-card {
+        padding: 25px 20px;
+        margin: 20px;
+        width: 100%;
+    }
+
+    .animation-box {
+        margin: 15px 0;
+    }
 }
