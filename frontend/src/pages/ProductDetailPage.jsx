@@ -3,137 +3,144 @@ import { useParams, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { products } from "../data/products";
 import { FaStar, FaShoppingCart, FaArrowLeft } from "react-icons/fa";
+import { useCart } from "../context/CartContext";
 import "./ProductDetailPage.css";
 
 const ProductDetailPage = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const product = products.find((p) => p.id === parseInt(id));
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
 
-    const [selectedSize, setSelectedSize] = useState("M");
-    const [quantity, setQuantity] = useState(1);
+  const product = products.find((p) => p.id === parseInt(id));
 
-    if (!product) {
-        return <div className="container">Product not found</div>;
-    }
+  const [selectedSize, setSelectedSize] = useState("M");
+  const [quantity, setQuantity] = useState(1);
 
-    const sizes = ["S", "M", "L", "XL", "XXL"];
+  if (!product) {
+    return <div className="container">Product not found</div>;
+  }
 
-    const handlePlaceOrder = async () => {
-        const userStr = localStorage.getItem("user");
-        if (!userStr) {
-            alert("Please login to place an order");
-            navigate("/");
-            return;
-        }
+  const sizes = ["S", "M", "L", "XL", "XXL"];
 
-        const user = JSON.parse(userStr);
+  // ✅ Add to cart only
+  const handleAddToCart = () => {
+    addToCart({
+      ...product,
+      qty: quantity,
+      size: selectedSize,
+    });
+  };
 
-        try {
-            const response = await fetch("http://localhost:5000/orders", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    productName: product.name,
-                    productId: product.id,
-                    size: selectedSize,
-                    quantity: quantity,
-                    price: product.price,
-                    userEmail: user.email,
-                    userName: user.name,
-                }),
-            });
+  // ✅ Buy Now → Add to cart + go to checkout
+  const handleBuyNow = () => {
+    addToCart({
+      ...product,
+      qty: quantity,
+      size: selectedSize,
+    });
+    navigate("/checkout");
+  };
 
-            const data = await response.json();
+  return (
+    <div className="product-detail-page">
+      <Header />
 
-            if (response.ok) {
-                alert("Order placed successfully!");
-                navigate("/home");
-            } else {
-                alert(data.message || "Failed to place order");
-            }
-        } catch (err) {
-            console.error("Order Error:", err);
-            alert("Server error. Please try again later.");
-        }
-    };
+      <div className="container detail-container">
+        <button className="back-btn" onClick={() => navigate(-1)}>
+          <FaArrowLeft /> Back to Shop
+        </button>
 
-    return (
-        <div className="product-detail-page">
-            <Header cartCount={3} />
+        <div className="detail-grid">
+          <div className="product-image-section">
+            <img
+              src={product.img || "https://via.placeholder.com/600"}
+              alt={product.name}
+              className="main-detail-img"
+            />
+          </div>
 
-            <div className="container detail-container">
-                <button className="back-btn" onClick={() => navigate(-1)}>
-                    <FaArrowLeft /> Back to Shop
-                </button>
+          <div className="product-info-section">
+            <span className="detail-tag">{product.tag || "New"}</span>
+            <h1 className="detail-title">{product.name}</h1>
 
-                <div className="detail-grid">
-                    <div className="product-image-section">
-                        <img src={product.img || "https://via.placeholder.com/600"} alt={product.name} className="main-detail-img" />
-                    </div>
-
-                    <div className="product-info-section">
-                        <span className="detail-tag">{product.tag || "New"}</span>
-                        <h1 className="detail-title">{product.name}</h1>
-
-                        <div className="detail-rating">
-                            <div className="stars">
-                                {[...Array(5)].map((_, i) => (
-                                    <FaStar key={i} className={i < 4 ? "star-filled" : "star-empty"} />
-                                ))}
-                            </div>
-                            <span className="reviews">({product.reviews} customer reviews)</span>
-                        </div>
-
-                        <div className="detail-price">
-                            <span className="price">${product.price}</span>
-                            {product.oldPrice && <span className="old-price">${product.oldPrice}</span>}
-                        </div>
-
-                        <p className="detail-description">
-                            Elevate your style with this premium quality {product.name.toLowerCase()}.
-                            Crafted with comfort and durability in mind, perfect for any occasion.
-                        </p>
-
-                        <div className="selection-group">
-                            <h4>Select Size</h4>
-                            <div className="size-options">
-                                {sizes.map((size) => (
-                                    <button
-                                        key={size}
-                                        className={`size-btn ${selectedSize === size ? "active" : ""}`}
-                                        onClick={() => setSelectedSize(size)}
-                                    >
-                                        {size}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="selection-group">
-                            <h4>Quantity</h4>
-                            <div className="quantity-control">
-                                <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
-                                <span>{quantity}</span>
-                                <button onClick={() => setQuantity(quantity + 1)}>+</button>
-                            </div>
-                        </div>
-
-                        <div className="action-buttons">
-                            <button className="place-order-btn" onClick={handlePlaceOrder}>
-                                Place Order Now
-                            </button>
-                            <button className="add-to-cart-outline">
-                                <FaShoppingCart /> Add to Cart
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            <div className="detail-rating">
+              <div className="stars">
+                {[...Array(5)].map((_, i) => (
+                  <FaStar
+                    key={i}
+                    className={i < 4 ? "star-filled" : "star-empty"}
+                  />
+                ))}
+              </div>
+              <span className="reviews">
+                ({product.reviews} customer reviews)
+              </span>
             </div>
+
+            <div className="detail-price">
+              <span className="price">${product.price}</span>
+              {product.oldPrice && (
+                <span className="old-price">${product.oldPrice}</span>
+              )}
+            </div>
+
+            <p className="detail-description">
+              Elevate your style with this premium quality{" "}
+              {product.name.toLowerCase()}.
+              Crafted with comfort and durability in mind.
+            </p>
+
+            {/* SIZE */}
+            <div className="selection-group">
+              <h4>Select Size</h4>
+              <div className="size-options">
+                {sizes.map((size) => (
+                  <button
+                    key={size}
+                    className={`size-btn ${
+                      selectedSize === size ? "active" : ""
+                    }`}
+                    onClick={() => setSelectedSize(size)}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* QUANTITY */}
+            <div className="selection-group">
+              <h4>Quantity</h4>
+              <div className="quantity-control">
+                <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>
+                  -
+                </button>
+                <span>{quantity}</span>
+                <button onClick={() => setQuantity(quantity + 1)}>+</button>
+              </div>
+            </div>
+
+            {/* ACTION BUTTONS */}
+            <div className="action-buttons">
+              <button
+                className="add-to-cart-outline"
+                onClick={handleAddToCart}
+              >
+                <FaShoppingCart /> Add to Cart
+              </button>
+
+              <button
+                className="buy-now-btn"
+                onClick={handleBuyNow}
+              >
+                Buy Now
+              </button>
+            </div>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default ProductDetailPage;

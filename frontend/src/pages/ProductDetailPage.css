@@ -180,6 +180,53 @@
   align-items: center;
   gap: 10px;
 }
+/* BUY NOW BUTTON */
+.buy-now-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  color: #ffffff;
+
+  padding: 14px 24px;
+  border-radius: 12px;
+  border: none;
+
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+  box-shadow: 0 10px 25px rgba(34, 197, 94, 0.25);
+}
+
+/* Hover effect */
+.buy-now-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(34, 197, 94, 0.35);
+  background: linear-gradient(135deg, #15803d, #16a34a);
+}
+
+/* Active (click) */
+.buy-now-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 8px 18px rgba(34, 197, 94, 0.3);
+}
+
+/* Disabled (optional future use) */
+.buy-now-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 14px;
+  margin-top: 25px;
+}
 
 @media (max-width: 768px) {
   .detail-grid {

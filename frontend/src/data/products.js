@@ -5,6 +5,6 @@ export const products = [
     { id: 4, name: "Urban Streetwear Hoodie", price: 65, img: "/assets/urban-hoodie.png", rating: 4.8, reviews: 981, category: ['Men', 'Women'] },
     { id: 5, name: "Running Sneakers", price: 120, oldPrice: 149, img: "/assets/running-sneakers.png", tag: "Top Rated", rating: 4.9, reviews: 2045, category: ['Footwear', 'Sports'] },
     { id: 6, name: "Leather Crossbody Bag", price: 145, img: "/assets/leather-bag.png", tag: "Premium", rating: 4.7, reviews: 341, category: ['Women', 'Accessories', 'Premium'] },
-    { id: 7, name: "Kids' Graphic Tee", price: 25, img: "https://images.unsplash.com/photo-1519233630132-8408104523c1?q=80&w=600&auto=format&fit=crop", tag: "Kids", rating: 4.5, reviews: 143, category: ['Kids'] },
-    { id: 8, name: "Designer Sunglasses", price: 199, img: "https://images.unsplash.com/photo-1511499767390-90342f16b117?q=80&w=600&auto=format&fit=crop", tag: "Accessories", rating: 4.8, reviews: 656, category: ['Accessories'] }
+    { id: 7, name: "Kids' Graphic Tee", price: 25, img: "/assets/Graphic-Tee.png", tag: "Kids", rating: 4.5, reviews: 143, category: ['Kids'] },
+    { id: 8, name: "Designer Sunglasses", price: 199, img: "/assets/Designer-Sunglasses.png", tag: "Accessories", rating: 4.8, reviews: 656, category: ['Accessories'] }
 ];

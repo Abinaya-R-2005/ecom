@@ -1,0 +1,101 @@
+/* Center the page content */
+.wishlist-page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.wishlist-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Vertical Center */
+  align-items: center;     /* Horizontal Center */
+  padding: 40px 20px;
+}
+
+/* Attractive Card Style */
+.empty-wishlist-card {
+  background: #ffffff;
+  padding: 60px 40px;
+  border-radius: 32px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+  max-width: 550px;
+  width: 100%;
+  text-align: center;
+  border: 1px solid #f1f5f9;
+}
+
+/* Animated Icon Section */
+.wishlist-icon-wrapper {
+  width: 100px;
+  height: 100px;
+  background: #fdf2f8; /* Very soft pink */
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 30px;
+  font-size: 40px;
+}
+
+.floating-heart {
+  display: inline-block;
+  animation: heartPulse 2s infinite ease-in-out;
+}
+
+@keyframes heartPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+/* Typography & Spacing */
+.empty-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+.empty-subtitle {
+  font-size: 16px;
+  color: #64748b;
+  line-height: 1.8; /* Proper line spacing */
+  margin-bottom: 40px;
+}
+
+/* The Unique Button Style */
+.classic-browse-btn {
+  display: inline-block;
+  padding: 18px 40px;
+  background: #7c3aed; /* Your brand purple */
+  color: #fff;
+  border-radius: 16px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 20px rgba(124, 58, 237, 0.2);
+}
+
+.classic-browse-btn:hover {
+  background: #6d28d9;
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(124, 58, 237, 0.4);
+}
+
+/* Title for when items exist */
+.page-title {
+  align-self: flex-start;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.page-title span {
+  color: #7c3aed;
+  font-weight: 400;
+}

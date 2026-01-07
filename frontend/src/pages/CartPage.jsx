@@ -1,0 +1,135 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import { Trash2, ChevronLeft } from "lucide-react";
+import Header from "../components/Header";
+import "./CartPage.css";
+
+const CartPage = () => {
+  const { cart, removeFromCart, updateQty } = useCart();
+  const navigate = useNavigate();
+
+  const subtotal = cart.reduce(
+    (acc, item) => acc + item.price * item.qty,
+    0
+  );
+  const tax = subtotal * 0.08;
+  const total = subtotal + tax;
+
+  return (
+    <div className="cart-page-wrapper">
+      <Header />
+
+      <div className={`container cart-container ${cart.length === 0 ? "is-empty" : ""}`}>
+        {cart.length > 0 && (
+          <>
+            <div className="continue-link" onClick={() => navigate("/home")}>
+              <ChevronLeft size={16} /> Continue Shopping
+            </div>
+            <h1 className="cart-title">
+              Shopping Cart ({cart.length} items)
+            </h1>
+          </>
+        )}
+
+        {cart.length === 0 ? (
+          <div className="empty-cart-card">
+            <div className="cart-icon-wrapper">🛒</div>
+            <h2 className="empty-title">Your bag is light as a feather!</h2>
+            <p className="empty-subtitle">
+              Fill it with things that make you smile.
+            </p>
+            <button
+              className="classic-shop-btn"
+              onClick={() => navigate("/home")}
+            >
+              Fill Your Bag
+            </button>
+          </div>
+        ) : (
+          <div className="cart-grid">
+            {/* LEFT COLUMN */}
+            <div className="cart-items-column">
+              {cart.map((item) => {
+                // ✅ IMAGE FIX (NO other file touched)
+                const imageSrc =
+                  item.img || item.image || "https://via.placeholder.com/120";
+
+                return (
+                  <div key={item.id} className="cart-product-card">
+                    <img
+                      src={imageSrc}
+                      alt={item.name}
+                      className="product-img"
+                    />
+
+                    <div className="product-details">
+                      <div className="product-header">
+                        <h3>{item.name}</h3>
+                        <button
+                          className="delete-btn"
+                          onClick={() => removeFromCart(item.id)}
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+
+                      <div className="product-footer">
+                        <div className="qty-controls">
+                          <button onClick={() => updateQty(item.id, item.qty - 1)}>
+                            -
+                          </button>
+                          <span>{item.qty}</span>
+                          <button onClick={() => updateQty(item.id, item.qty + 1)}>
+                            +
+                          </button>
+                        </div>
+
+                        <span className="current-price">
+                          ${(item.price * item.qty).toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* RIGHT COLUMN */}
+            <div className="summary-column">
+              <div className="summary-card">
+                <h3>Order Summary</h3>
+
+                <div className="summary-row">
+                  <span>Subtotal</span>
+                  <span>${subtotal.toFixed(2)}</span>
+                </div>
+
+                <div className="summary-row">
+                  <span>Tax</span>
+                  <span>${tax.toFixed(2)}</span>
+                </div>
+
+                <hr />
+
+                <div className="summary-row total">
+                  <span>Total</span>
+                  <span>${total.toFixed(2)}</span>
+                </div>
+
+                <button
+                  className="checkout-full-btn"
+                  onClick={() => navigate("/checkout")}
+                >
+                  Proceed to Checkout
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default CartPage;

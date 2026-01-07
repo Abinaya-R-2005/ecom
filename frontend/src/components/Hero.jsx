@@ -5,44 +5,14 @@ import heroMens from "../assets/hero_mens_white-removebg-preview.png";
 import heroKids from "../assets/hero_kids_white-removebg-preview.png";
 import heroShoes from "../assets/hero_shoes_white-removebg-preview.png";
 import heroWatch from "../assets/hero_watch_white-removebg-preview.png";
-import './hero.css';
+import "./hero.css";
 
 const slides = [
-  {
-    id: 1,
-    img: fashionHero,
-    title: "Perfect Style",
-    subtitle: "New Trends",
-    discount: "Up to 50% OFF"
-  },
-  {
-    id: 2,
-    img: heroMens,
-    title: "Urban Streetwear",
-    subtitle: "Cool & Casual",
-    discount: "New Arrivals"
-  },
-  {
-    id: 3,
-    img: heroKids,
-    title: "Kids Collection",
-    subtitle: "Playful Styles",
-    discount: "Flat 20% OFF"
-  },
-  {
-    id: 4,
-    img: heroShoes,
-    title: "Premium Footwear",
-    subtitle: "Run in Style",
-    discount: "Best Sellers"
-  },
-  {
-    id: 5,
-    img: heroWatch,
-    title: "Luxury Timepieces",
-    subtitle: "Classic Elegance",
-    discount: "Exclusive Deals"
-  }
+  { id: 1, img: fashionHero, title: "Perfect Style", subtitle: "New Trends", discount: "Up to 50% OFF" },
+  { id: 2, img: heroMens, title: "Urban Streetwear", subtitle: "Cool & Casual", discount: "New Arrivals" },
+  { id: 3, img: heroKids, title: "Kids Collection", subtitle: "Playful Styles", discount: "Flat 20% OFF" },
+  { id: 4, img: heroShoes, title: "Premium Footwear", subtitle: "Run in Style", discount: "Best Sellers" },
+  { id: 5, img: heroWatch, title: "Luxury Timepieces", subtitle: "Classic Elegance", discount: "Exclusive Deals" }
 ];
 
 function Hero() {
@@ -59,7 +29,7 @@ function Hero() {
 
   return (
     <section className="hero-section-wrapper">
-      <div className="container hero-container key={slide.id}">
+      <div className="container hero-container" key={slide.id}>
         <div className="hero-left fade-in">
           <span className="badge-new">New Arrivals 2026</span>
 
@@ -69,8 +39,7 @@ function Hero() {
           </h1>
 
           <p className="hero-desc">
-            Explore our curated collection of premium products with exclusive deals,
-            fast shipping, and hassle-free returns. Join millions of happy customers.
+            Explore premium products with exclusive deals and fast delivery.
           </p>
 
           <div className="hero-buttons">
@@ -79,26 +48,15 @@ function Hero() {
             </button>
             <button className="secondary-btn">View Deals</button>
           </div>
-
-          <div className="stats-row">
-            <div className="stat-item">
-              <h3>2M+</h3>
-              <p>Products</p>
-            </div>
-            <div className="stat-item">
-              <h3>50K+</h3>
-              <p>Brands</p>
-            </div>
-            <div className="stat-item">
-              <h3>10M+</h3>
-              <p>Customers</p>
-            </div>
-          </div>
         </div>
 
         <div className="hero-right fade-in">
           <div className="featured-card">
-            <img src={slide.img} alt={slide.title} className="featured-img" />
+            <img
+              src={slide.img}
+              alt={slide.title}
+              className="featured-img"
+            />
 
             <div className="float-card">
               <div className="float-content">
