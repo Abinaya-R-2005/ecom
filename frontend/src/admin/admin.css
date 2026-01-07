@@ -1,0 +1,30 @@
+.admin-container {
+  min-height: 100vh;
+  background: #f4f1ff;
+  padding: 40px;
+  font-family: "Poppins", sans-serif;
+}
+
+.admin-container h1 {
+  color: #5b2dff;
+  margin-bottom: 30px;
+}
+
+.admin-cards {
+  display: flex;
+  gap: 20px;
+}
+
+.admin-card {
+  padding: 20px 30px;
+  background: white;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #5b2dff;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(91, 45, 255, 0.15);
+}
+
+.admin-card:hover {
+  background: #ede9ff;
+}

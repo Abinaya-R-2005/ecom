@@ -2,11 +2,16 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const cors = require("cors");
+const multer = require("multer");
+const path = require("path");
+
 require("dotenv").config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
+
 
 // -------------------- CONFIG --------------------
 const ADMIN_EMAIL = "admin@gmail.com";
@@ -55,6 +60,19 @@ const orderSchema = new mongoose.Schema({
 });
 
 const Order = mongoose.model("Order", orderSchema);
+
+// -------------------- IMAGE UPLOAD CONFIG --------------------
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage });
+
 
 // ==================== AUTH ====================
 
@@ -171,9 +189,9 @@ app.get("/categories", async (req, res) => {
 });
 
 // ---------- ADD PRODUCT ----------
-app.post("/admin/product", async (req, res) => {
+app.post("/admin/product", upload.single("image"), async (req, res) => {
   try {
-    const { email, name, category, price, description, image } = req.body;
+    const { email, name, category, price, description } = req.body;
 
     if (email !== ADMIN_EMAIL) {
       return res.status(403).json({ message: "Not authorized" });
@@ -184,14 +202,16 @@ app.post("/admin/product", async (req, res) => {
       category,
       price,
       description,
-      image
+      image: req.file ? `/uploads/${req.file.filename}` : "",
     });
 
     res.json({ message: "Product added", product });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Failed to add product" });
   }
 });
+
 
 // ---------- GET PRODUCTS ----------
 app.get("/products", async (req, res) => {
@@ -233,6 +253,23 @@ app.get("/admin/sales", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch sales" });
   }
+});
+// UPDATE CATEGORY
+app.put("/admin/category/:id", async (req, res) => {
+  const { email, name } = req.body;
+  if (email !== ADMIN_EMAIL) return res.status(403).json({ message: "No access" });
+
+  await Category.findByIdAndUpdate(req.params.id, { name });
+  res.json({ message: "Updated" });
+});
+
+// DELETE CATEGORY
+app.delete("/admin/category/:id", async (req, res) => {
+  const { email } = req.body;
+  if (email !== ADMIN_EMAIL) return res.status(403).json({ message: "No access" });
+
+  await Category.findByIdAndDelete(req.params.id);
+  res.json({ message: "Deleted" });
 });
 
 // ==================== SERVER ====================

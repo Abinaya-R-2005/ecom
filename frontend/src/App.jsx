@@ -6,14 +6,21 @@ import Checkout from './pages/Checkout';
 import ProductDetailPage from './pages/ProductDetailPage';
 import OrderSuccess from './components/OrderSuccess';
 import './ShopHub.css';
-
+import AdminDashboard from './admin/AdminDashboard';
+import SalesAnalytics from "./admin/Sales";
+import AddCategory from "./admin/AddCategory";
+import AddProduct from "./admin/AddProduct";
 function App() {
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
 
   return (
     <Router>
       <Routes>
-        <Route path="/admin" element={<AuthPage />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/add-category" element={<AddCategory />} />
+        <Route path="/admin/add-product" element={<AddProduct />} />
+
+
         <Route path="/" element={<AuthPage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
