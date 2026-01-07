@@ -155,10 +155,14 @@
   align-items: center;
   text-decoration: none;
   color: var(--text-dark);
-  font-size: 12px;
+  /* font-size: 12px;  removed to let svg control size or be inherited */
   gap: 4px;
   position: relative;
   transition: color 0.2s;
+}
+
+.icon-link svg {
+  font-size: 18px;
 }
 
 .icon-link:hover {

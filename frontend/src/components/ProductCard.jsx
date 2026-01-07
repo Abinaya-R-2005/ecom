@@ -31,7 +31,7 @@ const ProductCard = ({ product }) => {
         <img src={product.img} alt={product.name} />
 
         <div className="overlay-actions">
-          <button onClick={() => navigate(`/product/${product.id}`)}>
+          <button className="quick-view-btn" onClick={() => navigate(`/product/${product.id}`)}>
             <FaEye /> Quick View
           </button>
         </div>
@@ -41,7 +41,7 @@ const ProductCard = ({ product }) => {
         <h4>{product.name}</h4>
         <p>${product.price}</p>
 
-        <button onClick={() => addToCart(product)}>
+        <button className="add-cart-full" onClick={() => addToCart(product)}>
           <FaShoppingCart /> Add to Cart
         </button>
       </div>

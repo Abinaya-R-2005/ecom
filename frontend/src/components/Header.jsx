@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FaSearch,
   FaUser,
   FaHeart,
   FaShoppingCart,
   FaBars,
-  FaMapMarkerAlt
+  FaMapMarkerAlt,
+  FaSignOutAlt
 } from "react-icons/fa";
 import "./Header.css";
 import { useWishlist } from "../context/WishlistContext";
@@ -14,6 +15,12 @@ import { useCart } from "../context/CartContext";
 
 const Header = ({ onSearch }) => {
   const [showCategories, setShowCategories] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/");
+  };
 
   const { wishlist } = useWishlist();
   const { cart } = useCart(); // ✅ cart count
@@ -74,6 +81,11 @@ const Header = ({ onSearch }) => {
               </span>
             )}
           </Link>
+
+          {/* 🚪 Logout */}
+          <button onClick={handleLogout} className="icon-link" style={{ background: "none", border: "none", cursor: "pointer" }}>
+            <FaSignOutAlt />
+          </button>
         </div>
       </div>
 
@@ -89,7 +101,7 @@ const Header = ({ onSearch }) => {
           </div>
 
           <div className="cat-links">
-            {["Men","Women","Kids","Accessories","Footwear","Watches","Sports","Sale"]
+            {["Men", "Women", "Kids", "Accessories", "Footwear", "Watches", "Sports", "Sale"]
               .map(cat => (
                 <Link key={cat} to={`/category/${cat.toLowerCase()}`} className="cat-item">
                   {cat}
