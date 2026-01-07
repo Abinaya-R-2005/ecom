@@ -10,9 +10,11 @@ const CartPage = () => {
   const navigate = useNavigate();
 
   const subtotal = cart.reduce(
-    (acc, item) => acc + item.price * item.qty,
+    (acc, item) => acc + (Number(item.unitPrice || item.price) * Number(item.qty)),
     0
   );
+
+
   const tax = subtotal * 0.08;
   const total = subtotal + tax;
 
@@ -56,7 +58,7 @@ const CartPage = () => {
                   item.img || item.image || "https://via.placeholder.com/120";
 
                 return (
-                  <div key={item.id} className="cart-product-card">
+                  <div key={item.productId} className="cart-product-card">
                     <img
                       src={imageSrc}
                       alt={item.name}
@@ -68,7 +70,7 @@ const CartPage = () => {
                         <h3>{item.name}</h3>
                         <button
                           className="delete-btn"
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => removeFromCart(item.productId)}
                         >
                           <Trash2 size={18} />
                         </button>
@@ -76,18 +78,20 @@ const CartPage = () => {
 
                       <div className="product-footer">
                         <div className="qty-controls">
-                          <button onClick={() => updateQty(item.id, item.qty - 1)}>
+                          <button onClick={() => updateQty(item.productId, item.qty - 1)}>
                             -
                           </button>
                           <span>{item.qty}</span>
-                          <button onClick={() => updateQty(item.id, item.qty + 1)}>
+                          <button onClick={() => updateQty(item.productId, item.qty + 1)}>
                             +
                           </button>
                         </div>
 
                         <span className="current-price">
-                          ${(item.price * item.qty).toFixed(2)}
+                          ${(Number(item.unitPrice || item.price) * Number(item.qty)).toFixed(2)}
                         </span>
+
+
                       </div>
                     </div>
                   </div>
@@ -133,3 +137,4 @@ const CartPage = () => {
 };
 
 export default CartPage;
+

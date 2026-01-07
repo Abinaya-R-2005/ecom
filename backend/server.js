@@ -61,6 +61,21 @@ const orderSchema = new mongoose.Schema({
 
 const Order = mongoose.model("Order", orderSchema);
 
+// -------------------- CART SCHEMA --------------------
+const cartSchema = new mongoose.Schema({
+  userEmail: String,
+  productId: Number,
+  name: String,
+  price: Number,
+  unitPrice: Number,
+  img: String,
+  qty: { type: Number, default: 1 }
+});
+
+
+const Cart = mongoose.model("Cart", cartSchema);
+
+
 // -------------------- IMAGE UPLOAD CONFIG --------------------
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -254,6 +269,93 @@ app.get("/admin/sales", async (req, res) => {
     res.status(500).json({ message: "Failed to fetch sales" });
   }
 });
+
+// ==================== CART ====================
+
+// ---------- GET CART ----------
+app.get("/cart/:email", async (req, res) => {
+  try {
+    const cartItems = await Cart.find({ userEmail: req.params.email });
+    res.json(cartItems);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch cart" });
+  }
+});
+
+// ---------- ADD/UPDATE CART ITEM ----------
+app.post("/cart", async (req, res) => {
+  try {
+    const { userEmail, productId, name, price, img, qty } = req.body;
+
+    let cartItem = await Cart.findOne({ userEmail, productId });
+
+    if (cartItem) {
+      cartItem.qty += (qty || 1);
+      cartItem.price = cartItem.unitPrice * cartItem.qty; // Update total price
+      await cartItem.save();
+    } else {
+      // price in request is the unit price initially
+      cartItem = await Cart.create({
+        userEmail,
+        productId,
+        name,
+        unitPrice: price,
+        price: price * (qty || 1),
+        img,
+        qty: qty || 1
+      });
+    }
+
+    res.json({ message: "Cart updated", cartItem });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update cart" });
+  }
+});
+
+
+// ---------- UPDATE QTY ----------
+app.post("/cart/update-qty", async (req, res) => {
+  try {
+    const { userEmail, productId, qty } = req.body;
+    if (qty < 1) {
+      await Cart.findOneAndDelete({ userEmail, productId });
+      return res.json({ message: "Item removed from cart" });
+    }
+
+    let cartItem = await Cart.findOne({ userEmail, productId });
+    if (!cartItem) return res.status(404).json({ message: "Item not found" });
+
+    cartItem.qty = qty;
+    cartItem.price = cartItem.unitPrice * qty; // Recalculate total price
+    await cartItem.save();
+
+    res.json({ message: "Quantity updated", cartItem });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update quantity" });
+  }
+});
+
+
+// ---------- REMOVE FROM CART ----------
+app.delete("/cart/:email/:productId", async (req, res) => {
+  try {
+    await Cart.findOneAndDelete({ userEmail: req.params.email, productId: req.params.productId });
+    res.json({ message: "Item removed from cart" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to remove item" });
+  }
+});
+
+// ---------- CLEAR CART ----------
+app.delete("/cart/:email", async (req, res) => {
+  try {
+    await Cart.deleteMany({ userEmail: req.params.email });
+    res.json({ message: "Cart cleared" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to clear cart" });
+  }
+});
+
 // UPDATE CATEGORY
 app.put("/admin/category/:id", async (req, res) => {
   const { email, name } = req.body;
