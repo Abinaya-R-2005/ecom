@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+
 import Header from "../components/Header";
 import FlashSaleBar from "../components/FlashSaleBar";
 import Hero from "../components/Hero";
 import ProductCard from "../components/ProductCard";
 import { FaStar } from "react-icons/fa";
 import "./HomePage.css";
-import { products } from "../data/products";
+import React, { useState, useEffect } from "react";
+
 
 const HomePage = () => {
   const [priceRange, setPriceRange] = useState(2000);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [products, setProducts] = useState([]);
 
 
   const handleCategoryChange = (category) => {
@@ -24,11 +26,23 @@ const HomePage = () => {
   };
 
   // Filter products based on selected categories (OR logic) and search term
-  const filteredProducts = products.filter(product => {
-    const matchesCategory = selectedCategories.length === 0 || product.category.some(cat => selectedCategories.includes(cat));
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+const filteredProducts = products.filter(product => {
+  const matchesCategory =
+    selectedCategories.length === 0 ||
+    selectedCategories.includes(product.category);
+
+  const matchesSearch =
+    product.name.toLowerCase().includes(searchTerm.toLowerCase());
+
+  return matchesCategory && matchesSearch;
+});
+
+useEffect(() => {
+  fetch("http://localhost:5000/products")
+    .then(res => res.json())
+    .then(data => setProducts(data))
+    .catch(err => console.error("Failed to fetch products", err));
+}, []);
 
   return (
     <div className="homepage">
@@ -123,7 +137,7 @@ const HomePage = () => {
 
           <div className="products-grid">
             {filteredProducts.map(p => (
-              <ProductCard key={p.id} product={p} />
+              <ProductCard key={p._id} product={p} />
             ))}
           </div>
         </main>

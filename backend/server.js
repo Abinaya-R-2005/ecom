@@ -259,6 +259,16 @@ app.post("/orders", async (req, res) => {
     res.status(500).json({ message: "Failed to place order" });
   }
 });
+// GET PRODUCTS BY CATEGORY
+app.get("/products/category/:category", async (req, res) => {
+  try {
+    const category = req.params.category;
+    const products = await Product.find({ category });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch category products" });
+  }
+});
 
 // ---------- ADMIN SALES FILTER ----------
 app.get("/admin/sales", async (req, res) => {

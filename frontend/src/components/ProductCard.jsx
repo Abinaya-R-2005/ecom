@@ -10,11 +10,11 @@ const ProductCard = ({ product }) => {
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const { addToCart } = useCart();
 
-  const isWishlisted = wishlist.some(p => p.id === product.id);
+  const isWishlisted = wishlist.some(p => p._id === product._id);
 
   const toggleWishlist = () => {
     isWishlisted
-      ? removeFromWishlist(product.id)
+      ? removeFromWishlist(product._id)
       : addToWishlist(product);
   };
 
@@ -28,10 +28,17 @@ const ProductCard = ({ product }) => {
           <FaHeart />
         </button>
 
-        <img src={product.img} alt={product.name} />
+        {/* ✅ FIXED IMAGE */}
+        <img
+          src={`http://localhost:5000${product.image}`}
+          alt={product.name}
+        />
 
         <div className="overlay-actions">
-          <button className="quick-view-btn" onClick={() => navigate(`/product/${product.id}`)}>
+          <button
+            className="quick-view-btn"
+            onClick={() => navigate(`/product/${product._id}`)}
+          >
             <FaEye /> Quick View
           </button>
         </div>
@@ -41,7 +48,10 @@ const ProductCard = ({ product }) => {
         <h4>{product.name}</h4>
         <p>${product.price}</p>
 
-        <button className="add-cart-full" onClick={() => addToCart(product)}>
+        <button
+          className="add-cart-full"
+          onClick={() => addToCart(product)}
+        >
           <FaShoppingCart /> Add to Cart
         </button>
       </div>

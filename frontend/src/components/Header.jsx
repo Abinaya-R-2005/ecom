@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect,useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   FaSearch,
@@ -21,9 +21,18 @@ const Header = ({ onSearch }) => {
     localStorage.removeItem("user");
     navigate("/");
   };
+  const [categories, setCategories] = useState([]);
 
   const { wishlist } = useWishlist();
   const { cart } = useCart(); // ✅ cart count
+useEffect(() => {
+  fetch("http://localhost:5000/categories")
+    .then((res) => res.json())
+    .then((data) => {
+      setCategories(data);
+    })
+    .catch((err) => console.error("Error fetching categories:", err));
+}, []);
 
   return (
     <header className="sh-header">
@@ -101,12 +110,16 @@ const Header = ({ onSearch }) => {
           </div>
 
           <div className="cat-links">
-            {["Men", "Women", "Kids", "Accessories", "Footwear", "Watches", "Sports", "Sale"]
-              .map(cat => (
-                <Link key={cat} to={`/category/${cat.toLowerCase()}`} className="cat-item">
-                  {cat}
-                </Link>
-              ))}
+           {categories.map((cat) => (
+              <Link
+                key={cat._id}
+    to={`/category/${cat.name}`}
+    className="cat-item"
+  >
+    {cat.name}
+  </Link>
+))}
+
           </div>
         </div>
       </nav>

@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { WishlistProvider } from "./context/WishlistContext";
 import { CartProvider } from "./context/CartContext";
 
+import CategoryProducts from "./pages/CategoryProducts";
+
 import HomePage from "./pages/HomePage";
 import WishlistPage from "./pages/WishlistPage";
 import CartPage from "./pages/CartPage";
@@ -35,6 +37,10 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/add-category" element={<AddCategory />} />
             <Route path="/admin/add-product" element={<AddProduct />} />
+            
+            {/* Category Products Route */}
+            <Route path="/category/:category" element={<CategoryProducts />} />
+
           </Routes>
         </Router>
       </CartProvider>
