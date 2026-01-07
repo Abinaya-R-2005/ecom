@@ -7,7 +7,7 @@ import ProductDetailPage from './pages/ProductDetailPage';
 import OrderSuccess from './components/OrderSuccess';
 import './ShopHub.css';
 import AdminDashboard from './admin/AdminDashboard';
-import SalesAnalytics from "./admin/Sales";
+
 import AddCategory from "./admin/AddCategory";
 import AddProduct from "./admin/AddProduct";
 function App() {
