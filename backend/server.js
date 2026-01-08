@@ -58,6 +58,9 @@ const orderSchema = new mongoose.Schema({
   price: Number,
   userEmail: String,
   userName: String,
+  status: { type: String, default: "Processing" },
+  shippedAt: Date,
+  deliveredAt: Date,
   createdAt: { type: Date, default: Date.now }
 });
 
@@ -66,7 +69,7 @@ const Order = mongoose.model("Order", orderSchema);
 // -------------------- CART SCHEMA --------------------
 const cartSchema = new mongoose.Schema({
   userEmail: String,
-  productId: Number,
+  productId: String,
   name: String,
   price: Number,
   unitPrice: Number,
@@ -289,10 +292,32 @@ app.get("/products/:id", async (req, res) => {
 // ---------- PLACE ORDER ----------
 app.post("/orders", async (req, res) => {
   try {
-    const order = await Order.create(req.body);
+    const orderData = { ...req.body, status: "Ordered" };
+    const order = await Order.create(orderData);
     res.json({ message: "Order placed", order });
   } catch (error) {
     res.status(500).json({ message: "Failed to place order" });
+  }
+});
+
+// ---------- UPDATE ORDER STATUS ----------
+app.put("/orders/:id/status", async (req, res) => {
+  try {
+    const { status } = req.body;
+    const update = { status };
+
+    if (status === "Shipped") {
+      update.shippedAt = new Date();
+    } else if (status === "Delivered") {
+      update.deliveredAt = new Date();
+    }
+
+    const order = await Order.findByIdAndUpdate(req.params.id, update, { new: true });
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    res.json({ message: "Order status updated", order });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update order status" });
   }
 });
 

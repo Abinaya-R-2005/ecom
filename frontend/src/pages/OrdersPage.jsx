@@ -83,7 +83,25 @@ const OrdersPage = () => {
         }
     };
 
+    const updateOrderStatus = async (orderId, nextStatus) => {
+        try {
+            const res = await fetch(`http://localhost:5000/orders/${orderId}/status`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: nextStatus })
+            });
+            if (res.ok) {
+                const updatedOrder = await res.json();
+                setOrders(prev => prev.map(o => o._id === orderId ? updatedOrder.order : o));
+            }
+        } catch (err) {
+            console.error("Failed to update status:", err);
+        }
+    };
+
     if (loading) return <div className="loading">Loading orders...</div>;
+
+    const stages = ["Ordered", "Shipped", "Delivered"];
 
     return (
         <div className="orders-container">
@@ -97,28 +115,73 @@ const OrdersPage = () => {
                 </div>
             ) : (
                 <div className="orders-list">
-                    {orders.map((order) => (
-                        <div key={order._id} className="order-card">
-                            <div className="order-header">
-                                <span>Ordered on {new Date(order.createdAt).toLocaleDateString()}</span>
-                                <span>Order ID: {order._id.slice(-6).toUpperCase()}</span>
-                            </div>
-                            <div className="order-details">
-                                <div className="product-info">
-                                    <span className="product-name">{order.productName}</span>
-                                    <span className="product-date">Qty: {order.quantity}</span>
+                    {orders.map((order) => {
+                        const currentStageIndex = stages.indexOf(order.status || "Ordered");
+                        return (
+                            <div key={order._id} className="order-card">
+                                <div className="order-header">
+                                    <span>Ordered on {new Date(order.createdAt).toLocaleDateString()}</span>
+                                    <span>Order ID: {order._id.slice(-6).toUpperCase()}</span>
                                 </div>
-                                <div className="order-meta">
-                                    <div className="order-price">₹{order.price}</div>
-                                    <span className="order-status">Delivered</span>
-                                </div>
-                            </div>
 
-                            <button className="rate-btn" onClick={() => handleOpenModal(order)}>
-                                <FaStar /> Rate & Review
-                            </button>
-                        </div>
-                    ))}
+                                {/* Visual Stepper */}
+                                <div className="order-stepper">
+                                    {stages.map((stage, index) => (
+                                        <div key={stage} className={`step ${index <= currentStageIndex ? "active completed" : ""}`}>
+                                            <div className="step-circle">{index <= currentStageIndex ? "✓" : index + 1}</div>
+                                            <div className="step-label">{stage}</div>
+                                            {index < stages.length - 1 && <div className="step-line"></div>}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="order-details">
+                                    <div className="product-info">
+                                        <span className="product-name">{order.productName}</span>
+                                        <span className="product-qty">Quantity: {order.quantity}</span>
+                                        <div className="order-dates">
+                                            {order.shippedAt && (
+                                                <span className="date-info shipped">
+                                                    Shipped on: {new Date(order.shippedAt).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                </span>
+                                            )}
+                                            {order.deliveredAt && (
+                                                <span className="date-info delivered">
+                                                    Delivered on: {new Date(order.deliveredAt).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="order-meta">
+                                        <div className="order-price">₹{order.price}</div>
+                                        <span className={`order-status status-${order.status?.toLowerCase() || 'ordered'}`}>
+                                            {order.status || "Ordered"}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="order-actions">
+                                    <button className="rate-btn" onClick={() => handleOpenModal(order)}>
+                                        <FaStar /> Rate & Review
+                                    </button>
+
+                                    {/* Simulation Buttons */}
+                                    <div className="demo-controls">
+                                        {order.status === "Ordered" && (
+                                            <button className="demo-btn ship" onClick={() => updateOrderStatus(order._id, "Shipped")}>
+                                                Mark as Shipped
+                                            </button>
+                                        )}
+                                        {order.status === "Shipped" && (
+                                            <button className="demo-btn deliver" onClick={() => updateOrderStatus(order._id, "Delivered")}>
+                                                Mark as Delivered
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
             )}
 
