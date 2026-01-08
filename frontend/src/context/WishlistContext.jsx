@@ -7,12 +7,12 @@ export const WishlistProvider = ({ children }) => {
 
   const addToWishlist = (product) => {
     setWishlist(prev =>
-      prev.some(p => p.id === product.id) ? prev : [...prev, product]
+      prev.some(p => p._id === product._id) ? prev : [...prev, product]
     );
   };
 
   const removeFromWishlist = (id) => {
-    setWishlist(prev => prev.filter(p => p.id !== id));
+    setWishlist(prev => prev.filter(p => p._id !== id));
   };
 
   return (
