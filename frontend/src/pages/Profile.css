@@ -108,7 +108,7 @@
   background: white;
   padding: 10px;
   border-radius: 26px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .nav-btn {
@@ -186,7 +186,7 @@
   justify-content: space-between;
   margin-bottom: 15px;
   border-left: 6px solid var(--p-purple);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   transition: transform 0.25s ease;
 }
 
@@ -244,7 +244,7 @@
   background: white;
   padding: 40px;
   border-radius: 28px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.06);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
   border: 1px solid #ede9fe;
 }
 
@@ -334,5 +334,10 @@
 @media (max-width: 968px) {
   .profile-container {
     grid-template-columns: 1fr;
+  }
+
+  .profile-sidebar {
+    position: relative;
+    top: auto;
   }
 }

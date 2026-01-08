@@ -61,27 +61,29 @@ const Header = ({ onSearch }) => {
       <div className="main-nav container">
         <Link to="/home" className="logo-brand">ShopHub</Link>
 
+        {/* Search Bar - Moved outside nav-content for mobile visibility */}
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Search for products..."
+            onChange={(e) => onSearch && onSearch(e.target.value)}
+          />
+          <button className="search-btn">
+            <FaSearch />
+          </button>
+        </div>
+
         <div className="mobile-toggle" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
           {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
         </div>
 
         <div className={`nav-content ${isMobileMenuOpen ? "open" : ""}`}>
-          <div className="search-bar">
-            <input
-              type="text"
-              placeholder="Search for products..."
-              onChange={(e) => onSearch && onSearch(e.target.value)}
-            />
-            <button className="search-btn">
-              <FaSearch />
-            </button>
-          </div>
 
           <div className="nav-icons">
             <Link to="/profile" className="icon-link" onClick={() => setIsMobileMenuOpen(false)}>
-  <FaUser />
-  <span className="mobile-label">Profile</span>
-</Link>
+              <FaUser />
+              <span className="mobile-label">Profile</span>
+            </Link>
 
             <Link to="/orders" className="icon-link" title="My Orders" onClick={() => setIsMobileMenuOpen(false)}>
               <FaBoxOpen />

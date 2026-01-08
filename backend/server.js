@@ -241,6 +241,41 @@ app.delete("/wishlist/:email/:productId", async (req, res) => {
   res.json({ message: "Removed" });
 });
 
+// REVIEWS
+app.post("/reviews", upload.none(), async (req, res) => {
+  try {
+    const { productId, userEmail, userName, rating, comment } = req.body;
+
+    // 1. Create Review
+    const review = await Review.create({
+      productId,
+      userEmail,
+      userName,
+      rating: Number(rating),
+      comment
+    });
+
+    // 2. Update Product Stats
+    const product = await Product.findById(productId);
+    if (product) {
+      const currentRating = product.averageRating || 0;
+      const currentCount = product.ratingCount || 0;
+
+      const newCount = currentCount + 1;
+      const newAvg = ((currentRating * currentCount) + Number(rating)) / newCount;
+
+      product.ratingCount = newCount;
+      product.averageRating = newAvg;
+      await product.save();
+    }
+
+    res.json(review);
+  } catch (err) {
+    console.error("Review Error:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
 // ---------- CHANGE PASSWORD ----------
 app.put("/change-password", async (req, res) => {
   try {

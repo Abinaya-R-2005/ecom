@@ -35,19 +35,22 @@
 
 /* logout btn */
 .logout-btn {
-  background: #ef4444;
-  color: white;
-  border: none;
+  background: white;
+  color: #ef4444;
+  border: 1px solid #ef4444;
   padding: 8px 16px;
   border-radius: 8px;
   font-size: 14px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(239, 68, 68, 0.1);
 }
 
 .logout-btn:hover {
-  background: #dc2626;
+  background: #ef4444;
+  color: white;
   transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(220, 38, 38, 0.3);
 }
 
 /* buttons */
