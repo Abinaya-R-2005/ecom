@@ -1,827 +1,338 @@
 :root {
-
   --p-purple: #7c3aed;
-
+  --p-purple-dark: #5b21b6;
   --p-purple-light: #f5f3ff;
 
   --p-gold: #f59e0b;
-
   --p-gold-light: #fffbeb;
 
   --p-slate: #1e293b;
-
   --p-gray: #64748b;
 
-  --p-bg: #f8fafc;
-
+  --p-bg: linear-gradient(180deg, #f8fafc, #f1f5f9);
 }
 
-
+/* -------------------------------------------------- */
+/* PAGE BASE */
+/* -------------------------------------------------- */
 
 .profile-page-bg {
-
-  background-color: var(--p-bg);
-
+  background: var(--p-bg);
   min-height: 100vh;
-
   padding: 60px 20px;
-
 }
-
-
 
 .profile-container {
-
   max-width: 1200px;
-
   margin: 0 auto;
-
   display: grid;
-
   grid-template-columns: 320px 1fr;
-
   gap: 50px;
-
 }
 
-
-
-/* --- SIDEBAR & PHOTO FIX --- */
+/* -------------------------------------------------- */
+/* SIDEBAR */
+/* -------------------------------------------------- */
 
 .profile-sidebar {
-
   position: sticky;
-
   top: 40px;
-
   height: fit-content;
-
 }
-
-
 
 .profile-user-card {
-
-  background: white;
-
+  background: linear-gradient(180deg, #ffffff, #fafafa);
   padding: 40px 20px;
-
-  border-radius: 24px;
-
+  border-radius: 28px;
   text-align: center;
-
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-
+  box-shadow: 0 20px 40px rgba(124, 58, 237, 0.15);
   margin-bottom: 25px;
-
-  border: 1px solid #eef2f6;
-
+  border: 1px solid #ede9fe;
 }
-
-
 
 .avatar-outer-container {
-
   position: relative;
-
-  width: 110px;
-
-  height: 110px;
-
+  width: 120px;
+  height: 120px;
   margin: 0 auto 20px;
-
 }
-
-
 
 .avatar-wrapper {
-
-  width: 110px;
-
-  height: 110px;
-
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
-
-  overflow: hidden; /* This crops the uploaded photo */
-
+  overflow: hidden;
   background: #f1f5f9;
-
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
-  border: 3px solid var(--p-purple-light);
-
+  border: 4px solid var(--p-purple-light);
+  box-shadow: 0 0 0 6px #ede9fe;
 }
-
-
 
 .profile-avatar-img {
-
   width: 100%;
-
   height: 100%;
-
-  object-fit: cover; /* This makes the photo fill the circle without stretching */
-
+  object-fit: cover;
 }
-
-
 
 .profile-avatar-placeholder {
-
-  font-size: 110px;
-
-  color: #cbd5e1;
-
+  font-size: 120px;
+  color: #c7d2fe;
 }
-
-
 
 .avatar-edit-btn {
-
   position: absolute;
-
-  bottom: 0;
-
-  right: 0;
-
-  background: var(--p-purple);
-
+  bottom: 4px;
+  right: 4px;
+  background: linear-gradient(135deg, var(--p-purple), var(--p-purple-dark));
   color: white;
-
-  border: 2px solid white;
-
-  padding: 8px;
-
+  border: none;
+  padding: 10px;
   border-radius: 50%;
-
   cursor: pointer;
-
-  z-index: 2;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
 }
 
-
-
-.user-meta { color: var(--p-gray); font-size: 0.9rem; margin-top: 4px; }
-
-
-
-.login-status-pill {
-
-  display: inline-block;
-
-  margin-top: 15px;
-
-  background: var(--p-purple-light);
-
-  color: var(--p-purple);
-
-  padding: 6px 15px;
-
-  border-radius: 99px;
-
-  font-size: 0.75rem;
-
-  font-weight: 700;
-
+.user-meta {
+  color: var(--p-gray);
+  font-size: 0.9rem;
+  margin-top: 6px;
 }
 
-
-
-/* --- SIDE NAV --- */
+/* -------------------------------------------------- */
+/* SIDE NAV */
+/* -------------------------------------------------- */
 
 .profile-side-nav {
-
   background: white;
-
   padding: 10px;
-
-  border-radius: 24px;
-
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-
+  border-radius: 26px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
 }
-
-
 
 .nav-btn {
-
   width: 100%;
-
   display: flex;
-
   align-items: center;
-
   padding: 16px 20px;
-
   border: none;
-
   background: transparent;
-
   cursor: pointer;
-
-  border-radius: 15px;
-
-  font-weight: 600;
-
+  border-radius: 16px;
+  font-weight: 700;
   color: var(--p-slate);
-
-  transition: 0.3s;
-
-}
-
-
-
-.nav-btn span { flex: 1; text-align: left; margin-left: 15px; }
-
-.nav-btn:hover { background: var(--p-purple-light); color: var(--p-purple); transform: translateX(5px); }
-
-
-
-.icon-purple { color: var(--p-purple); }
-
-.icon-gold { color: var(--p-gold); }
-
-.logout-btn { color: #ef4444; margin-top: 10px; }
-
-.logout-btn:hover { background: #fef2f2; color: #ef4444; }
-
-
-
-/* --- MAIN CONTENT & ORDERS --- */
-
-.profile-content-section { margin-bottom: 50px; }
-
-.section-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-
-.header-title { display: flex; align-items: center; gap: 12px; }
-
-.header-title h3 { font-size: 1.4rem; font-weight: 800; color: var(--p-slate); margin: 0; }
-
-
-
-.order-row-card {
-
-  background: white;
-
-  padding: 20px 30px;
-
-  border-radius: 16px;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  margin-bottom: 15px;
-
-  border: 1px solid #f1f5f9;
-
-}
-
-
-
-.status-badge { padding: 5px 12px; border-radius: 99px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
-
-.status-badge.delivered { background: #dcfce7; color: #15803d; }
-
-.status-badge.shipped { background: var(--p-gold-light); color: #92400e; }
-
-
-
-/* --- CLASSIC ADDRESS SECTION --- */
-
-.address-grid-container {
-
-  display: grid;
-
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-
-  gap: 25px;
-
-}
-
-
-
-.address-item-card {
-
-  background: #ffffff;
-
-  padding: 25px 30px;
-
-  border-radius: 16px;
-
-  border: 1px solid #e2e8f0;
-
-  display: flex;
-
-  flex-direction: column;
-
-  min-height: 180px;
-
-  transition: 0.3s;
-
-}
-
-.wishlist-grid-container {
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 12px;
-
-}
-
-
-
-.wishlist-item-card {
-
-  background: white;
-
-  padding: 18px 25px;
-
-  border-radius: 12px;
-
-  border: 1px solid #edf2f7;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  transition: transform 0.2s;
-
-}
-
-
-
-.wishlist-item-card:hover {
-
-  transform: translateY(-2px);
-
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-
-}
-
-
-
-.wish-actions {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 15px;
-
-}
-
-
-
-.move-to-cart-btn {
-
-  background: #7c3aed;
-
-  color: white;
-
-  border: none;
-
-  padding: 8px 18px;
-
-  border-radius: 8px;
-
-  font-weight: 600;
-
-  cursor: pointer;
-
-  font-size: 0.85rem;
-
-}
-
-
-
-.remove-wish-btn {
-
-  background: #fff1f2;
-
-  color: #e11d48; /* Red for delete */
-
-  border: 1px solid #ffe4e6;
-
-  padding: 10px;
-
-  border-radius: 8px;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  cursor: pointer;
-
-  transition: all 0.2s;
-
-}
-
-
-
-.remove-wish-btn:hover {
-
-  background: #e11d48;
-
-  color: white;
-
-}
-
-
-
-.empty-section-placeholder {
-
-  text-align: center;
-
-  padding: 30px;
-
-  background: #f8fafc;
-
-  border: 2px dashed #cbd5e1;
-
-  border-radius: 15px;
-
-}
-
-/* --- BACK TO STORE BUTTON --- */
-
-.back-home-wrapper {
-
-  max-width: 1200px;
-
-  margin: 0 auto 30px auto;
-
-  display: flex;
-
-}
-
-
-
-.back-home-btn {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 12px;
-
-  background: white;
-
-  color: #1e293b;
-
-  border: 1px solid #e2e8f0;
-
-  padding: 12px 24px;
-
-  border-radius: 16px;
-
-  font-weight: 700;
-
-  cursor: pointer;
-
   transition: all 0.3s ease;
-
 }
 
-
-
-.back-home-btn:hover {
-
-  background: #7c3aed;
-
-  color: white;
-
-  transform: translateY(-3px);
-
-  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.2);
-
+.nav-btn span {
+  flex: 1;
+  text-align: left;
+  margin-left: 15px;
 }
 
-
-
-.back-home-btn:hover .back-icon {
-
-  transform: translateX(-5px);
-
+.nav-btn:hover {
+  background: linear-gradient(90deg, var(--p-purple-light), #ffffff);
+  color: var(--p-purple);
+  transform: translateX(6px);
 }
 
+.logout-btn {
+  color: #ef4444;
+}
 
+.logout-btn:hover {
+  background: #fef2f2;
+  color: #ef4444;
+}
 
-.back-icon { transition: transform 0.3s ease; }
+/* -------------------------------------------------- */
+/* CONTENT SECTIONS */
+/* -------------------------------------------------- */
 
+.profile-content-section {
+  margin-bottom: 60px;
+}
 
-
-/* --- WISHLIST DELETE ICON --- */
-
-.remove-wish-btn {
-
-  background: #fff1f2;
-
-  color: #f43f5e;
-
-  border: 1px solid #ffe4e6;
-
-  padding: 10px;
-
-  border-radius: 10px;
-
-  cursor: pointer;
-
-  transition: all 0.2s ease;
-
+.section-header-flex {
   display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-}
-
-
-
-.remove-wish-btn:hover {
-
-  background: #f43f5e;
-
-  color: white;
-
-  transform: scale(1.1);
-
-}
-
-
-
-/* --- WISHLIST ITEM CARD --- */
-
-.wishlist-item-card {
-
-  background: white;
-
-  padding: 20px 30px;
-
-  border-radius: 16px;
-
-  border: 1px solid #f1f5f9;
-
-  display: flex;
-
-  align-items: center;
-
   justify-content: space-between;
-
-  transition: 0.3s;
-
-}
-
-
-
-.wishlist-item-card:hover {
-
-  border-color: #7c3aed;
-
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-
-}
-
-.active-border { border: 2px solid var(--p-purple); background: var(--p-purple-light); }
-
-
-
-.address-top-row { display: flex; justify-content: space-between; margin-bottom: 12px; }
-
-.address-text-content { color: var(--p-gray); line-height: 1.6; margin-bottom: 20px; flex-grow: 1; }
-
-
-
-.address-actions-row { display: flex; gap: 20px; border-top: 1px solid #f1f5f9; padding-top: 15px; }
-
-.address-actions-row button { background: none; border: none; font-weight: 700; color: var(--p-purple); cursor: pointer; }
-
-.address-actions-row .del-btn { color: #ef4444; }
-
-
-
-/* --- CLASSIC WISHLIST SECTION --- */
-
-.wishlist-grid-container { display: flex; flex-direction: column; gap: 15px; }
-
-
-
-.wishlist-item-card {
-
-  background: white;
-
-  padding: 20px 35px;
-
-  border-radius: 16px;
-
-  border: 1px solid #f1f5f9;
-
-  display: flex;
-
   align-items: center;
-
-  justify-content: space-between;
-
+  margin-bottom: 30px;
 }
 
-
-
-.wish-price { color: var(--p-purple); font-weight: 700; margin: 0; }
-
-.wish-actions { display: flex; align-items: center; gap: 20px; }
-
-
-
-.move-to-cart-btn {
-
-  background: var(--p-purple);
-
-  color: white;
-
-  border: none;
-
-  padding: 10px 24px;
-
-  border-radius: 12px;
-
-  font-weight: 700;
-
-  cursor: pointer;
-
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
-
-
-
-.remove-wish-btn { background: #fff1f2; color: #f43f5e; border: none; padding: 10px; border-radius: 10px; cursor: pointer; }
-
-
-
-/* --- SECURITY & FORMS --- */
-
-.security-form-card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
-
-.form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
-
-.input-box label { display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 8px; }
-
-.input-box input { width: 100%; padding: 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; background: #fcfcfd; }
-
-.update-pwd-btn { background: var(--p-slate); color: white; border: none; padding: 14px 40px; border-radius: 99px; font-weight: 700; cursor: pointer; }
-
-
-
-/* --- UTILITY & RESPONSIVE --- */
-
-.view-all-btn, .details-pill-btn, .add-new-btn { background: white; border: 1.5px solid #e2e8f0; padding: 8px 20px; border-radius: 99px; font-weight: 700; cursor: pointer; }
-
-.add-new-btn { background: var(--p-gold-light); color: var(--p-gold); border-color: #fde68a; }
-
-.empty-section-placeholder {
-
-  text-align: center;
-
-  padding: 40px;
-
-  background: white;
-
-  border-radius: 20px;
-
-  border: 1px dashed #cbd5e1;
-
-  color: var(--p-gray);
-
-}
-
-/* --- BUTTON HOVER EFFECTS --- */
-
-button, .view-all-btn, .add-new-btn, .details-pill-btn, .move-to-cart-btn, .remove-wish-btn {
-
-  transition: all 0.25s ease;
-
-}
-
-
-
-button:hover, .view-all-btn:hover, .add-new-btn:hover, .details-pill-btn:hover, .move-to-cart-btn:hover, .remove-wish-btn:hover {
-
-  transform: translateY(-2px);
-
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-
-}
-
-
-
-/* Optional: Slight color change for primary buttons on hover */
-
-.move-to-cart-btn:hover {
-
-  background: #5b21b6; /* slightly darker purple */
-
-}
-
-
-
-.add-new-btn:hover {
-
-  background: #fcd34d; /* slightly darker gold */
-
-}
-
-
-
-.view-all-btn:hover {
-
-  background: #f3f4f6; /* subtle light background change */
-
-}
-
-
-
-/* --- HOVER EFFECT ON TITLES --- */
 
 .header-title h3 {
-
-  transition: color 0.25s ease, transform 0.25s ease;
-
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--p-slate);
 }
 
+/* -------------------------------------------------- */
+/* ORDERS */
+/* -------------------------------------------------- */
 
-
-.header-title h3:hover {
-
-  color: var(--p-purple);
-
-  transform: translateY(-2px);
-
-  cursor: default;
-
-}
-
-
-
-/* --- INPUT OUTLINES --- */
-
-.input-box input {
-
-  outline: 2px solid transparent;
-
-  transition: outline 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-
-}
-
-
-
-.input-box input:focus {
-
-  outline: 2px solid var(--p-purple);
-
-  border-color: var(--p-purple);
-
-  box-shadow: 0 0 5px rgba(124, 58, 237, 0.3);
-
-}
-
-
-
-
-
-.empty-section-placeholder p {
-
+.order-row-card {
+  background: white;
+  padding: 22px 30px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 15px;
-
-  font-size: 0.95rem;
-
+  border-left: 6px solid var(--p-purple);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  transition: transform 0.25s ease;
 }
 
+.order-row-card:hover {
+  transform: translateY(-3px);
+}
 
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
 
+.status-badge.delivered {
+  background: #dcfce7;
+  color: #15803d;
+}
 
+.status-badge.shipped {
+  background: var(--p-gold-light);
+  color: #92400e;
+}
+
+/* -------------------------------------------------- */
+/* ADDRESS */
+/* -------------------------------------------------- */
+
+.address-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 25px;
+}
+
+.address-item-card {
+  background: white;
+  padding: 28px 32px;
+  border-radius: 20px;
+  border: 1px solid #ede9fe;
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.1);
+  transition: all 0.3s ease;
+}
+
+.address-item-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--p-purple);
+}
+
+/* -------------------------------------------------- */
+/* FORMS */
+/* -------------------------------------------------- */
+
+.security-form-card {
+  background: white;
+  padding: 40px;
+  border-radius: 28px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.06);
+  border: 1px solid #ede9fe;
+}
+
+.security-form-card input,
+.security-form-card textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1.5px solid #e2e8f0;
+  margin-bottom: 18px;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+}
+
+.security-form-card input:focus,
+.security-form-card textarea:focus {
+  outline: none;
+  border-color: var(--p-purple);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.25);
+}
+
+.update-pwd-btn {
+  background: linear-gradient(135deg, var(--p-purple), var(--p-purple-dark));
+  color: white;
+  border: none;
+  padding: 14px 46px;
+  border-radius: 999px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(124, 58, 237, 0.4);
+}
+
+.update-pwd-btn:hover {
+  transform: translateY(-3px);
+}
+
+/* -------------------------------------------------- */
+/* BUTTONS */
+/* -------------------------------------------------- */
+
+.add-new-btn {
+  background: linear-gradient(135deg, var(--p-gold-light), #fde68a);
+  color: var(--p-gold);
+  border: none;
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-weight: 800;
+}
+
+.empty-section-placeholder {
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border-radius: 20px;
+  border: 2px dashed #c7d2fe;
+  color: var(--p-gray);
+}
+
+/* -------------------------------------------------- */
+/* BACK BUTTON */
+/* -------------------------------------------------- */
+
+.back-home-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border: 1px solid #ede9fe;
+  padding: 12px 26px;
+  border-radius: 18px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-home-btn:hover {
+  background: var(--p-purple);
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(124, 58, 237, 0.35);
+}
+
+/* -------------------------------------------------- */
+/* RESPONSIVE */
+/* -------------------------------------------------- */
 
 @media (max-width: 968px) {
-
-  .profile-container { grid-template-columns: 1fr; }
-
-  .form-grid { grid-template-columns: 1fr; }
-
+  .profile-container {
+    grid-template-columns: 1fr;
+  }
 }

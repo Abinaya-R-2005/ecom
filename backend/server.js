@@ -1,10 +1,10 @@
+// server.js
 const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
-
 require("dotenv").config();
 
 const app = express();
@@ -12,32 +12,38 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
-
-// -------------------- CONFIG --------------------
+/* ================= CONFIG ================= */
 const ADMIN_EMAIL = "admin@gmail.com";
 
-// -------------------- MongoDB --------------------
+/* ================= MONGODB ================= */
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch(err => console.log(err));
 
-// -------------------- USER SCHEMA --------------------
+/* ================= SCHEMAS ================= */
+
+// USER
+const addressSchema = new mongoose.Schema({
+  label: String,
+  address: String,
+  isDefault: Boolean
+});
+
 const userSchema = new mongoose.Schema({
   name: String,
   email: { type: String, unique: true },
-  password: String
+  password: String,
+  addresses: [addressSchema]
 });
-
 const User = mongoose.model("User", userSchema);
 
-// -------------------- CATEGORY SCHEMA --------------------
+// CATEGORY
 const categorySchema = new mongoose.Schema({
   name: { type: String, unique: true }
 });
-
 const Category = mongoose.model("Category", categorySchema);
 
-// -------------------- PRODUCT SCHEMA --------------------
+// PRODUCT
 const productSchema = new mongoose.Schema({
   name: String,
   category: String,
@@ -47,10 +53,9 @@ const productSchema = new mongoose.Schema({
   averageRating: { type: Number, default: 0 },
   ratingCount: { type: Number, default: 0 }
 });
-
 const Product = mongoose.model("Product", productSchema);
 
-// -------------------- ORDER SCHEMA --------------------
+// ORDER
 const orderSchema = new mongoose.Schema({
   productName: String,
   productId: String,
@@ -58,473 +63,211 @@ const orderSchema = new mongoose.Schema({
   price: Number,
   userEmail: String,
   userName: String,
-  shippingAddress: {
-    firstName: String,
-    lastName: String,
-    email: String,
-    address: String
-  },
-  shippingMethod: String,
-  paymentMethod: String,
-  shippingCost: Number,
   status: { type: String, default: "Ordered" },
-  shippedAt: Date,
-  deliveredAt: Date,
   createdAt: { type: Date, default: Date.now }
 });
-
 const Order = mongoose.model("Order", orderSchema);
 
-// -------------------- CART SCHEMA --------------------
+// CART
 const cartSchema = new mongoose.Schema({
   userEmail: String,
   productId: String,
   name: String,
-  price: Number,
   unitPrice: Number,
+  price: Number,
   img: String,
   qty: { type: Number, default: 1 }
 });
-
-
 const Cart = mongoose.model("Cart", cartSchema);
 
-// -------------------- REVIEW SCHEMA --------------------
+// WISHLIST
+const wishlistSchema = new mongoose.Schema({
+  userEmail: String,
+  productId: String,
+  name: String,
+  price: Number,
+  image: String
+});
+const Wishlist = mongoose.model("Wishlist", wishlistSchema);
+
+// REVIEW
 const reviewSchema = new mongoose.Schema({
   productId: String,
   userEmail: String,
   userName: String,
-  rating: { type: Number, required: true },
+  rating: Number,
   comment: String,
   images: [String],
   createdAt: { type: Date, default: Date.now }
 });
-
 const Review = mongoose.model("Review", reviewSchema);
 
-
-
-// -------------------- IMAGE UPLOAD CONFIG --------------------
+/* ================= IMAGE UPLOAD ================= */
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
+  destination: "uploads/",
+  filename: (req, file, cb) =>
+    cb(null, Date.now() + path.extname(file.originalname))
 });
-
 const upload = multer({ storage });
 
+/* ================= AUTH ================= */
 
-// ==================== AUTH ====================
-
-// ---------- SIGNUP ----------
+// SIGNUP
 app.post("/signup", async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-
-    if (!email.endsWith("@gmail.com")) {
-      return res.status(400).json({ message: "Email must end with @gmail.com" });
-    }
-
-    if (password.length < 6) {
-      return res.status(400).json({ message: "Password must be at least 6 characters" });
-    }
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    await User.create({
-      name,
-      email,
-      password: hashedPassword
-    });
-
-    res.json({ message: "Signup successful" });
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
+  const { name, email, password } = req.body;
+  const hashed = await bcrypt.hash(password, 10);
+  await User.create({ name, email, password: hashed });
+  res.json({ message: "Signup successful" });
 });
 
-// ---------- LOGIN ----------
+// LOGIN
 app.post("/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) return res.status(400).json({ message: "Invalid login" });
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "Invalid email or password" });
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) return res.status(400).json({ message: "Invalid login" });
+
+  res.json({
+    user: {
+      name: user.name,
+      email: user.email,
+      isAdmin: email === ADMIN_EMAIL
     }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid email or password" });
-    }
-
-    // 👑 Admin check by email only
-    const isAdmin = email === ADMIN_EMAIL;
-
-    res.json({
-      message: "Login successful",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        isAdmin
-      }
-    });
-
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
-app.post("/create-admin", async (req, res) => {
-  try {
-    const email = "admin@gmail.com";
-    const password = "admin123";
-
-    const existing = await User.findOne({ email });
-    if (existing) {
-      return res.json({ message: "Admin already exists" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    await User.create({
-      name: "Admin",
-      email,
-      password: hashedPassword
-    });
-
-    res.json({ message: "Admin created successfully" });
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
-  }
+  });
 });
 
-// ==================== ADMIN APIs ====================
+/* ================= USER PROFILE ================= */
+app.get("/user/:email", async (req, res) => {
+  const user = await User.findOne({ email: req.params.email }).select("-password");
+  res.json(user);
+});
 
-// ---------- ADD CATEGORY ----------
+/* ================= ADMIN APIs ================= */
+
+// ADMIN – CATEGORY
 app.post("/admin/category", async (req, res) => {
-  try {
-    const { name, email } = req.body;
-
-    if (email !== ADMIN_EMAIL) {
-      return res.status(403).json({ message: "Not authorized" });
-    }
-
-    const category = await Category.create({ name });
-    res.json({ message: "Category added", category });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to add category" });
-  }
+  if (req.body.email !== ADMIN_EMAIL) return res.sendStatus(403);
+  const category = await Category.create({ name: req.body.name });
+  res.json(category);
 });
 
-// ---------- GET CATEGORIES ----------
-app.get("/categories", async (req, res) => {
-  const categories = await Category.find();
-  res.json(categories);
-});
-
-// ---------- ADD PRODUCT ----------
-app.post("/admin/product", upload.single("image"), async (req, res) => {
-  try {
-    const { email, name, category, price, description } = req.body;
-
-    if (email !== ADMIN_EMAIL) {
-      return res.status(403).json({ message: "Not authorized" });
-    }
-
-    const product = await Product.create({
-      name,
-      category,
-      price,
-      description,
-      image: req.file ? `/uploads/${req.file.filename}` : "",
-    });
-
-    res.json({ message: "Product added", product });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to add product" });
-  }
-});
-
-// ---------- DELETE PRODUCT ----------
-app.delete("/admin/product/:id", async (req, res) => {
-  try {
-    const { email } = req.body; // In a real app, use headers/auth middleware
-
-    // Simple check (in production use proper Auth middleware)
-    if (email !== ADMIN_EMAIL && req.headers['user-email'] !== ADMIN_EMAIL) {
-      // Allow passing email via body OR header for flexibility
-      if (!email && !req.headers['user-email']) {
-        return res.status(403).json({ message: "Not authorized" });
-      }
-    }
-
-    await Product.findByIdAndDelete(req.params.id);
-    // Optional: Delete associated reviews
-    // await Review.deleteMany({ productId: req.params.id }); 
-
-    res.json({ message: "Product deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to delete product" });
-  }
-});
-
-
-// ---------- GET PRODUCTS ----------
-app.get("/products", async (req, res) => {
-  const products = await Product.find();
-  res.json(products);
-});
-
-// ---------- GET SINGLE PRODUCT ----------
-app.get("/products/:id", async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).json({ message: "Product not found" });
-    res.json(product);
-  } catch (err) {
-    res.status(500).json({ message: "Server Error" });
-  }
-});
-
-// ==================== ORDERS ====================
-
-// ---------- PLACE ORDER ----------
-app.post("/orders", async (req, res) => {
-  try {
-    const orderData = { ...req.body, status: "Ordered" };
-    const order = await Order.create(orderData);
-    res.json({ message: "Order placed", order });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to place order" });
-  }
-});
-
-// ---------- UPDATE ORDER STATUS ----------
-app.put("/orders/:id/status", async (req, res) => {
-  try {
-    const { status } = req.body;
-    const update = { status };
-
-    if (status === "Shipped") {
-      update.shippedAt = new Date();
-    } else if (status === "Delivered") {
-      update.deliveredAt = new Date();
-    }
-
-    const order = await Order.findByIdAndUpdate(req.params.id, update, { new: true });
-    if (!order) return res.status(404).json({ message: "Order not found" });
-
-    res.json({ message: "Order status updated", order });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to update order status" });
-  }
-});
-
-// ---------- GET USER ORDERS ----------
-app.get("/orders/:email", async (req, res) => {
-  try {
-    const orders = await Order.find({ userEmail: req.params.email }).sort({ createdAt: -1 });
-    res.json(orders);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to fetch orders" });
-  }
-});
-// GET PRODUCTS BY CATEGORY
-app.get("/products/category/:category", async (req, res) => {
-  try {
-    const category = req.params.category;
-    const products = await Product.find({ category });
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ message: "Failed to fetch category products" });
-  }
-});
-
-// ---------- ADMIN SALES FILTER ----------
-app.get("/admin/sales", async (req, res) => {
-  try {
-    const { email, startDate, endDate } = req.query;
-
-    if (email !== ADMIN_EMAIL) {
-      return res.status(403).json({ message: "Not authorized" });
-    }
-
-    const filter = {};
-    if (startDate && endDate) {
-      filter.createdAt = {
-        $gte: new Date(startDate),
-        $lte: new Date(endDate)
-      };
-    }
-
-    const orders = await Order.find(filter);
-    res.json(orders);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to fetch sales" });
-  }
-});
-
-// ==================== CART ====================
-
-// ---------- GET CART ----------
-app.get("/cart/:email", async (req, res) => {
-  try {
-    const cartItems = await Cart.find({ userEmail: req.params.email });
-    res.json(cartItems);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to fetch cart" });
-  }
-});
-
-// ---------- ADD/UPDATE CART ITEM ----------
-app.post("/cart", async (req, res) => {
-  try {
-    const { userEmail, productId, name, price, img, qty } = req.body;
-
-    let cartItem = await Cart.findOne({ userEmail, productId });
-
-    if (cartItem) {
-      cartItem.qty += (qty || 1);
-      cartItem.price = cartItem.unitPrice * cartItem.qty; // Update total price
-      await cartItem.save();
-    } else {
-      // price in request is the unit price initially
-      cartItem = await Cart.create({
-        userEmail,
-        productId,
-        name,
-        unitPrice: price,
-        price: price * (qty || 1),
-        img,
-        qty: qty || 1
-      });
-    }
-
-    res.json({ message: "Cart updated", cartItem });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to update cart" });
-  }
-});
-
-
-// ---------- UPDATE QTY ----------
-app.post("/cart/update-qty", async (req, res) => {
-  try {
-    const { userEmail, productId, qty } = req.body;
-    if (qty < 1) {
-      await Cart.findOneAndDelete({ userEmail, productId });
-      return res.json({ message: "Item removed from cart" });
-    }
-
-    let cartItem = await Cart.findOne({ userEmail, productId });
-    if (!cartItem) return res.status(404).json({ message: "Item not found" });
-
-    cartItem.qty = qty;
-    cartItem.price = cartItem.unitPrice * qty; // Recalculate total price
-    await cartItem.save();
-
-    res.json({ message: "Quantity updated", cartItem });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to update quantity" });
-  }
-});
-
-
-// ---------- REMOVE FROM CART ----------
-app.delete("/cart/:email/:productId", async (req, res) => {
-  try {
-    await Cart.findOneAndDelete({ userEmail: req.params.email, productId: req.params.productId });
-    res.json({ message: "Item removed from cart" });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to remove item" });
-  }
-});
-
-// ---------- CLEAR CART ----------
-app.delete("/cart/:email", async (req, res) => {
-  try {
-    await Cart.deleteMany({ userEmail: req.params.email });
-    res.json({ message: "Cart cleared" });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to clear cart" });
-  }
-});
-
-// ==================== REVIEWS ====================
-
-// ---------- GET REVIEWS ----------
-app.get("/reviews/:productId", async (req, res) => {
-  try {
-    const reviews = await Review.find({ productId: req.params.productId }).sort({ createdAt: -1 });
-    res.json(reviews);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to fetch reviews" });
-  }
-});
-
-// ---------- SUBMIT REVIEW ----------
-// ---------- SUBMIT REVIEW ----------
-app.post("/reviews", upload.array("images", 5), async (req, res) => {
-  try {
-    const { productId, userEmail, userName, rating, comment } = req.body;
-
-    const imageUrls = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
-
-    const review = await Review.create({
-      productId: String(productId),
-      userEmail,
-      userName,
-      rating: Number(rating),
-      comment,
-      images: imageUrls
-    });
-
-    // 🌟 Calculate Average Rating
-    const allReviews = await Review.find({ productId: String(productId) });
-    const totalRating = allReviews.reduce((sum, r) => sum + r.rating, 0);
-    const avgRating = totalRating / allReviews.length;
-
-    // Update Product
-    await Product.findByIdAndUpdate(productId, {
-      averageRating: avgRating.toFixed(1),
-      ratingCount: allReviews.length
-    });
-
-    res.json({ message: "Review submitted", review, avgRating });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to submit review" });
-  }
+app.get("/admin/categories", async (req, res) => {
+  res.json(await Category.find());
 });
 
 app.put("/admin/category/:id", async (req, res) => {
-  const { email, name } = req.body;
-  if (email !== ADMIN_EMAIL) return res.status(403).json({ message: "No access" });
-
-  await Category.findByIdAndUpdate(req.params.id, { name });
+  if (req.body.email !== ADMIN_EMAIL) return res.sendStatus(403);
+  await Category.findByIdAndUpdate(req.params.id, { name: req.body.name });
   res.json({ message: "Updated" });
 });
 
-// DELETE CATEGORY
 app.delete("/admin/category/:id", async (req, res) => {
-  const { email } = req.body;
-  if (email !== ADMIN_EMAIL) return res.status(403).json({ message: "No access" });
-
+  if (req.body.email !== ADMIN_EMAIL) return res.sendStatus(403);
   await Category.findByIdAndDelete(req.params.id);
   res.json({ message: "Deleted" });
 });
 
-// ==================== SERVER ====================
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
+// ADMIN – PRODUCT
+app.post("/admin/product", upload.single("image"), async (req, res) => {
+  if (req.body.email !== ADMIN_EMAIL) return res.sendStatus(403);
+
+  const product = await Product.create({
+    ...req.body,
+    image: req.file ? `/uploads/${req.file.filename}` : ""
+  });
+
+  res.json(product);
 });
+
+app.delete("/admin/product/:id", async (req, res) => {
+  if (req.body.email !== ADMIN_EMAIL) return res.sendStatus(403);
+  await Product.findByIdAndDelete(req.params.id);
+  res.json({ message: "Product deleted" });
+});
+
+// ADMIN – ORDERS
+app.get("/admin/orders", async (req, res) => {
+  if (req.query.email !== ADMIN_EMAIL) return res.sendStatus(403);
+  res.json(await Order.find().sort({ createdAt: -1 }));
+});
+
+app.put("/admin/orders/:id", async (req, res) => {
+  if (req.body.email !== ADMIN_EMAIL) return res.sendStatus(403);
+  await Order.findByIdAndUpdate(req.params.id, { status: req.body.status });
+  res.json({ message: "Status updated" });
+});
+
+// ADMIN – SALES
+app.get("/admin/sales", async (req, res) => {
+  if (req.query.email !== ADMIN_EMAIL) return res.sendStatus(403);
+  res.json(await Order.find());
+});
+
+/* ================= USER APIs ================= */
+
+// PRODUCTS
+app.get("/products", async (req, res) => res.json(await Product.find()));
+app.get("/products/:id", async (req, res) => res.json(await Product.findById(req.params.id)));
+
+// ORDERS
+app.post("/orders", async (req, res) => {
+  const order = await Order.create(req.body);
+  res.json(order);
+});
+app.get("/orders/:email", async (req, res) =>
+  res.json(await Order.find({ userEmail: req.params.email }))
+);
+
+// CART
+app.get("/cart/:email", async (req, res) =>
+  res.json(await Cart.find({ userEmail: req.params.email }))
+);
+app.post("/cart", async (req, res) => {
+  const item = await Cart.create(req.body);
+  res.json(item);
+});
+
+// WISHLIST
+app.get("/wishlist/:email", async (req, res) =>
+  res.json(await Wishlist.find({ userEmail: req.params.email }))
+);
+app.post("/wishlist", async (req, res) =>
+  res.json(await Wishlist.create(req.body))
+);
+app.delete("/wishlist/:email/:productId", async (req, res) => {
+  await Wishlist.findOneAndDelete(req.params);
+  res.json({ message: "Removed" });
+});
+
+// ---------- CHANGE PASSWORD ----------
+app.put("/change-password", async (req, res) => {
+  try {
+    const { email, currentPassword, newPassword } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    user.password = hashed;
+    await user.save();
+
+    res.json({ message: "Password updated successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+/* ================= SERVER ================= */
+app.listen(5000, () => console.log("Server running on port 5000"));
