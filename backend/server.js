@@ -58,7 +58,16 @@ const orderSchema = new mongoose.Schema({
   price: Number,
   userEmail: String,
   userName: String,
-  status: { type: String, default: "Processing" },
+  shippingAddress: {
+    firstName: String,
+    lastName: String,
+    email: String,
+    address: String
+  },
+  shippingMethod: String,
+  paymentMethod: String,
+  shippingCost: Number,
+  status: { type: String, default: "Ordered" },
   shippedAt: Date,
   deliveredAt: Date,
   createdAt: { type: Date, default: Date.now }

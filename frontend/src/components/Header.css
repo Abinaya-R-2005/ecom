@@ -231,15 +231,70 @@
 
 .cat-item {
   text-decoration: none;
-  color: var(--text-light);
+  color: var(--text-dark);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   white-space: nowrap;
-  transition: color 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px;
+  border-radius: 12px;
 }
 
+.cat-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 20px;
+  background: linear-gradient(135deg, #ffffff, #f3f4f6);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.05),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Category Specific Vibrancy */
 .cat-item:hover {
   color: var(--primary-dark);
+  background: rgba(124, 58, 237, 0.05);
+}
+
+.cat-item:hover .cat-icon-wrapper {
+  transform: translateY(-4px) scale(1.1) rotate(-3deg);
+  box-shadow:
+    0 8px 15px rgba(124, 58, 237, 0.2),
+    0 4px 6px rgba(124, 58, 237, 0.1);
+  border-color: var(--primary-color);
+  background: white;
+}
+
+/* Specific Accent Colors for better 'Image' feel */
+.cat-item:nth-child(1n) .cat-icon-wrapper {
+  border-left: 3px solid #60a5fa;
+}
+
+.cat-item:nth-child(2n) .cat-icon-wrapper {
+  border-left: 3px solid #f472b6;
+}
+
+.cat-item:nth-child(3n) .cat-icon-wrapper {
+  border-left: 3px solid #34d399;
+}
+
+.cat-item:nth-child(4n) .cat-icon-wrapper {
+  border-left: 3px solid #fbbf24;
+}
+
+.cat-item:nth-child(5n) .cat-icon-wrapper {
+  border-left: 3px solid #a78bfa;
 }
 
 /* Mobile Responsiveness */

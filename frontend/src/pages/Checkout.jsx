@@ -13,10 +13,25 @@ const Checkout = () => {
   const [selectedShipping, setSelectedShipping] = useState('standard');
   const [selectedPayment, setSelectedPayment] = useState('card');
 
+  // State for shipping information
+  const [shippingInfo, setShippingInfo] = useState({
+    firstName: '',
+    lastName: '',
+    email: user?.email || '',
+    address: ''
+  });
+
+  const handleShippingChange = (e) => {
+    const { name, value } = e.target;
+    setShippingInfo(prev => ({ ...prev, [name]: value }));
+  };
+
   // Calculations
   const subtotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
+  const shippingCosts = { standard: 0, express: 9.99, overnight: 24.99 };
+  const shippingCost = shippingCosts[selectedShipping];
   const tax = subtotal * 0.08;
-  const total = subtotal + tax;
+  const total = subtotal + tax + shippingCost;
 
   const handlePlaceOrder = async () => {
     if (!user) {
@@ -25,9 +40,12 @@ const Checkout = () => {
       return;
     }
 
+    if (!shippingInfo.firstName || !shippingInfo.address) {
+      alert("Please fill in the required shipping information");
+      return;
+    }
+
     try {
-      // Create an order for each item in the cart
-      // Note: Ideally backend should handle bulk orders, but this fits the existing schema
       const orderPromises = cart.map(item =>
         fetch("http://localhost:5000/orders", {
           method: "POST",
@@ -38,18 +56,17 @@ const Checkout = () => {
             quantity: item.qty,
             price: item.price * item.qty,
             userEmail: user.email,
-            userName: user.name
+            userName: user.name,
+            shippingAddress: shippingInfo,
+            shippingMethod: selectedShipping,
+            paymentMethod: selectedPayment,
+            shippingCost: shippingCost
           })
         })
       );
 
       await Promise.all(orderPromises);
-
-      // Clear cart
       if (clearCart) clearCart();
-      else console.warn("clearCart function not found in context");
-
-      // Navigate to the success page with animation
       navigate('/order-success', { state: { purchasedItems: cart } });
     } catch (error) {
       console.error("Order failed:", error);
@@ -82,19 +99,46 @@ const Checkout = () => {
               <div className="input-grid">
                 <div className="field">
                   <label>First Name</label>
-                  <input type="text" placeholder="John" />
+                  <input
+                    type="text"
+                    name="firstName"
+                    placeholder="John"
+                    value={shippingInfo.firstName}
+                    onChange={handleShippingChange}
+                    required
+                  />
                 </div>
                 <div className="field">
                   <label>Last Name</label>
-                  <input type="text" placeholder="Doe" />
+                  <input
+                    type="text"
+                    name="lastName"
+                    placeholder="Doe"
+                    value={shippingInfo.lastName}
+                    onChange={handleShippingChange}
+                  />
                 </div>
                 <div className="field full">
                   <label>Email Address</label>
-                  <input type="email" placeholder="john@example.com" />
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="john@example.com"
+                    value={shippingInfo.email}
+                    onChange={handleShippingChange}
+                    required
+                  />
                 </div>
                 <div className="field full">
                   <label>Street Address</label>
-                  <input type="text" placeholder="123 Main Street" />
+                  <input
+                    type="text"
+                    name="address"
+                    placeholder="123 Main Street"
+                    value={shippingInfo.address}
+                    onChange={handleShippingChange}
+                    required
+                  />
                 </div>
               </div>
             </section>
@@ -286,7 +330,9 @@ const Checkout = () => {
                 </div>
                 <div className="total-row">
                   <span>Shipping</span>
-                  <span className="free">FREE</span>
+                  <span className={shippingCost === 0 ? "free" : ""}>
+                    {shippingCost === 0 ? "FREE" : `$${shippingCost.toFixed(2)}`}
+                  </span>
                 </div>
                 <div className="total-row">
                   <span>Tax (8%)</span>
