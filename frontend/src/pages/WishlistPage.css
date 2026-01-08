@@ -1,22 +1,62 @@
-/* Center the page content */
+/* Layout & Centering */
 .wishlist-page-wrapper {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: #f8fafc;
 }
 
 .wishlist-main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  /* Vertical Center */
-  align-items: center;
-  /* Horizontal Center */
-  padding: 40px 20px;
+  align-items: center; /* Keeps the empty card centered */
+  padding: 0 20px 40px 20px;
 }
 
-/* Attractive Card Style */
+/* --- NEW: BUTTON ALIGNMENT --- */
+.back-btn-container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 40px; /* Pushes button below the "All Categories" bar */
+}
+
+/* --- THE MODERN BUTTON STYLE --- */
+.classic-browse-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 10px 22px;
+  border-radius: 999px; /* Pill shape */
+  
+  margin-bottom: 25px;
+
+  font-weight: 600;
+  font-size: 14px;
+  color: #64748b;
+  cursor: pointer;
+  text-decoration: none;
+  
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.classic-browse-btn:hover {
+  background: #ffffff;
+  color: #7c3aed; /* Brand Purple */
+  border-color: #7c3aed;
+  transform: translateX(-5px); /* Slide left on hover */
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.12);
+}
+
+.classic-browse-btn:active {
+  transform: translateX(-2px) scale(0.98);
+}
+
+/* --- REST OF PAGE STYLING --- */
 .empty-wishlist-card {
   background: #ffffff;
   padding: 60px 40px;
@@ -26,14 +66,13 @@
   width: 100%;
   text-align: center;
   border: 1px solid #f1f5f9;
+  margin-top: 20px;
 }
 
-/* Animated Icon Section */
 .wishlist-icon-wrapper {
   width: 100px;
   height: 100px;
   background: #fdf2f8;
-  /* Very soft pink */
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -48,62 +87,29 @@
 }
 
 @keyframes heartPulse {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.15);
-  }
-
-  100% {
-    transform: scale(1);
-  }
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
 }
 
-/* Typography & Spacing */
 .empty-title {
   font-size: 32px;
   font-weight: 800;
   color: #1e293b;
   margin-bottom: 16px;
-  letter-spacing: -0.5px;
 }
 
 .empty-subtitle {
   font-size: 16px;
   color: #64748b;
   line-height: 1.8;
-  /* Proper line spacing */
   margin-bottom: 40px;
 }
 
-/* The Unique Button Style */
-.classic-browse-btn {
-  display: inline-block;
-  padding: 18px 40px;
-  background: #7c3aed;
-  /* Your brand purple */
-  color: #fff;
-  border-radius: 16px;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 16px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 10px 20px rgba(124, 58, 237, 0.2);
-}
-
-.classic-browse-btn:hover {
-  background: #6d28d9;
-  transform: translateY(-3px);
-  box-shadow: 0 15px 30px rgba(124, 58, 237, 0.4);
-}
-
-/* Title for when items exist */
 .page-title {
   align-self: flex-start;
   font-size: 24px;
   font-weight: 700;
+  margin-top: 10px;
   margin-bottom: 30px;
   width: 100%;
 }
@@ -113,17 +119,9 @@
   font-weight: 400;
 }
 
-/* Mobile Responsiveness */
+/* Mobile Adjustments */
 @media (max-width: 600px) {
-  .empty-wishlist-card {
-    padding: 30px 20px;
-  }
-
-  .empty-title {
-    font-size: 24px;
-  }
-
-  .wishlist-main {
-    padding: 20px;
-  }
+  .empty-wishlist-card { padding: 30px 20px; }
+  .empty-title { font-size: 24px; }
+  .back-btn-container { margin-top: 20px; }
 }

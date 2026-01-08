@@ -7,7 +7,6 @@ import { FaStar } from "react-icons/fa";
 import "./HomePage.css";
 import React, { useState, useEffect } from "react";
 
-
 const HomePage = () => {
   const [priceRange, setPriceRange] = useState(2000);
   const [selectedCategories, setSelectedCategories] = useState([]);

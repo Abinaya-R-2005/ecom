@@ -78,10 +78,10 @@ const Header = ({ onSearch }) => {
           </div>
 
           <div className="nav-icons">
-            <Link to="/login" className="icon-link" onClick={() => setIsMobileMenuOpen(false)}>
-              <FaUser />
-              <span className="mobile-label">Login</span>
-            </Link>
+            <Link to="/profile" className="icon-link" onClick={() => setIsMobileMenuOpen(false)}>
+  <FaUser />
+  <span className="mobile-label">Profile</span>
+</Link>
 
             <Link to="/orders" className="icon-link" title="My Orders" onClick={() => setIsMobileMenuOpen(false)}>
               <FaBoxOpen />
@@ -133,7 +133,6 @@ const Header = ({ onSearch }) => {
               const rawName = cat.name || "";
               const name = rawName.toLowerCase().trim();
 
-              // Robust Icon Mapping
               const getIcon = (catName) => {
                 if (!catName) return "📦";
                 if (catName.includes("men")) return "👕";

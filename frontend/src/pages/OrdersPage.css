@@ -454,3 +454,70 @@
         font-size: 0.7rem;
     }
 }
+/* Back to Home Button Styling */
+/* Premium Classic eCommerce Back Button */
+.back-home-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #ffffff;
+    color: #1e293b; /* Sophisticated Slate Dark */
+    border: 1px solid #e2e8f0;
+    padding: 12px 24px;
+    border-radius: 50px; /* Pill shape is more modern/premium */
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); /* Ultra smooth ease-out */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    margin-bottom: 25px;
+    width: fit-content;
+}
+
+.back-home-btn svg {
+    font-size: 0.9rem;
+    transition: transform 0.4s ease;
+    color: #6366f1; /* Brand Purple only on the icon for focus */
+}
+
+/* Hover Effects */
+.back-home-btn:hover {
+    background: #ffffff;
+    color: #4f46e5; /* Text turns purple */
+    border-color: #4f46e5;
+    transform: translateY(-3px); /* Classic "lift" effect */
+    box-shadow: 0 10px 20px rgba(79, 70, 229, 0.12); /* Soft purple glow */
+}
+
+.back-home-btn:hover svg {
+    transform: translateX(-5px); /* Icon glides left independently */
+}
+
+/* Subtle Active (Click) Effect */
+.back-home-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(79, 70, 229, 0.08);
+}
+
+/* Optional: Add a very faint underline effect on hover */
+.back-home-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 10px;
+    left: 50px;
+    right: 25px;
+    height: 1px;
+    background: #4f46e5;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.4s ease;
+    opacity: 0.3;
+}
+
+.back-home-btn:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}

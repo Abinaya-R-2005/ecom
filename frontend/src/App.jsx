@@ -17,7 +17,7 @@ import AddProduct from "./admin/AddProduct";
 import RemoveProductPage from "./admin/RemoveProductPage";
 import AdminOrdersPage from "./admin/AdminOrdersPage";
 import OrdersPage from "./pages/OrdersPage"; // ✅ Import Orders Page
-
+import Profile from "./pages/Profile";
 function App() {
   return (
     <WishlistProvider>
@@ -46,6 +46,8 @@ function App() {
 
             {/* Category Products Route */}
             <Route path="/category/:category" element={<CategoryProducts />} />
+
+            <Route path="/profile" element={<Profile />} />
 
           </Routes>
         </Router>

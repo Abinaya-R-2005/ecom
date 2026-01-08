@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { FaStar, FaBoxOpen } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { FaStar, FaBoxOpen, FaArrowLeft, FaCheck } from "react-icons/fa";
 import "./OrdersPage.css";
 
 const OrdersPage = () => {
+    const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [selectedOrder, setSelectedOrder] = useState(null); // For modal
+    const [selectedOrder, setSelectedOrder] = useState(null); 
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
     const [hover, setHover] = useState(null);
@@ -43,38 +45,24 @@ const OrdersPage = () => {
             return;
         }
 
-        const reviewData = {
-            productId: selectedOrder.productId, // Ensure backend treats this as matching Product _id
-            userEmail: user.email,
-            userName: user.name,
-            rating,
-            comment
-        };
+        const formData = new FormData();
+        formData.append("productId", selectedOrder.productId);
+        formData.append("userEmail", user.email);
+        formData.append("userName", user.name);
+        formData.append("rating", rating);
+        formData.append("comment", comment);
 
         try {
-            // Since backend expects multipart/form-data because of 'upload.array', we need FormData
-            // Or we can update backend to accept JSON if no images. 
-            // Current backend uses 'upload.array("images", 5)'. It usually parses body even if no files.
-            // But standard 'fetch' with JSON body usually doesn't play well with multer unless configured.
-            // Let's use FormData to be safe since backend uses 'multer'.
-
-            const formData = new FormData();
-            formData.append("productId", reviewData.productId);
-            formData.append("userEmail", reviewData.userEmail);
-            formData.append("userName", reviewData.userName);
-            formData.append("rating", reviewData.rating);
-            formData.append("comment", reviewData.comment);
-
             const res = await fetch("http://localhost:5000/reviews", {
                 method: "POST",
-                body: formData, // Auto-sets Content-Type to multipart/form-data
+                body: formData, 
             });
 
-            const data = await res.json();
             if (res.ok) {
                 alert("Review submitted successfully!");
                 handleCloseModal();
             } else {
+                const data = await res.json();
                 alert(data.message || "Failed to submit review");
             }
         } catch (err) {
@@ -105,6 +93,11 @@ const OrdersPage = () => {
 
     return (
         <div className="orders-container">
+            {/* BACK BUTTON */}
+            <button className="back-home-btn" onClick={() => navigate("/home")}>
+                <FaArrowLeft /> Back to Shop
+            </button>
+
             <h2 className="orders-heading">My Orders</h2>
 
             {orders.length === 0 ? (
@@ -128,7 +121,9 @@ const OrdersPage = () => {
                                 <div className="order-stepper">
                                     {stages.map((stage, index) => (
                                         <div key={stage} className={`step ${index <= currentStageIndex ? "active completed" : ""}`}>
-                                            <div className="step-circle">{index <= currentStageIndex ? "✓" : index + 1}</div>
+                                            <div className="step-circle">
+                                                {index < currentStageIndex ? <FaCheck size={12}/> : index + 1}
+                                            </div>
                                             <div className="step-label">{stage}</div>
                                             {index < stages.length - 1 && <div className="step-line"></div>}
                                         </div>
@@ -142,12 +137,12 @@ const OrdersPage = () => {
                                         <div className="order-dates">
                                             {order.shippedAt && (
                                                 <span className="date-info shipped">
-                                                    Shipped on: {new Date(order.shippedAt).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                    Shipped: {new Date(order.shippedAt).toLocaleDateString()}
                                                 </span>
                                             )}
                                             {order.deliveredAt && (
                                                 <span className="date-info delivered">
-                                                    Delivered on: {new Date(order.deliveredAt).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                    Delivered: {new Date(order.deliveredAt).toLocaleDateString()}
                                                 </span>
                                             )}
                                         </div>
@@ -165,16 +160,15 @@ const OrdersPage = () => {
                                         <FaStar /> Rate & Review
                                     </button>
 
-                                    {/* Simulation Buttons */}
                                     <div className="demo-controls">
                                         {order.status === "Ordered" && (
                                             <button className="demo-btn ship" onClick={() => updateOrderStatus(order._id, "Shipped")}>
-                                                Mark as Shipped
+                                                Ship Item
                                             </button>
                                         )}
                                         {order.status === "Shipped" && (
                                             <button className="demo-btn deliver" onClick={() => updateOrderStatus(order._id, "Delivered")}>
-                                                Mark as Delivered
+                                                Mark Delivered
                                             </button>
                                         )}
                                     </div>
@@ -190,34 +184,29 @@ const OrdersPage = () => {
                 <div className="modal-overlay" onClick={handleCloseModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <h3 className="modal-title">Rate {selectedOrder.productName}</h3>
-
-                        <div className="form-group">
-                            <div className="star-rating">
-                                {[...Array(5)].map((_, index) => {
-                                    const ratingValue = index + 1;
-                                    return (
-                                        <FaStar
-                                            key={index}
-                                            className={`star-icon ${ratingValue <= (hover || rating) ? "filled" : ""}`}
-                                            onClick={() => setRating(ratingValue)}
-                                            onMouseEnter={() => setHover(ratingValue)}
-                                            onMouseLeave={() => setHover(null)}
-                                        />
-                                    );
-                                })}
-                            </div>
+                        <div className="star-rating">
+                            {[...Array(5)].map((_, index) => {
+                                const val = index + 1;
+                                return (
+                                    <FaStar
+                                        key={index}
+                                        className={`star-icon ${val <= (hover || rating) ? "filled" : ""}`}
+                                        onClick={() => setRating(val)}
+                                        onMouseEnter={() => setHover(val)}
+                                        onMouseLeave={() => setHover(null)}
+                                    />
+                                );
+                            })}
                         </div>
-
                         <textarea
                             className="review-input"
-                            placeholder="Write your feedback..."
+                            placeholder="How was your experience with this product?"
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
                         />
-
                         <div className="modal-actions">
                             <button className="cancel-btn" onClick={handleCloseModal}>Cancel</button>
-                            <button className="submit-btn" onClick={handleSubmitReview}>Submit Review</button>
+                            <button className="submit-btn" onClick={handleSubmitReview}>Submit</button>
                         </div>
                     </div>
                 </div>

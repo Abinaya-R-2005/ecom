@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
-// import { products } from "../data/products"; // Removed static import
 import { FaStar, FaShoppingCart, FaArrowLeft } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
 import "./ProductDetailPage.css";
@@ -91,7 +90,6 @@ const ProductDetailPage = () => {
         setUserRating(5);
         setUploadImages([]);
         fetchReviews();
-        // Refresh product to update avg rating
         fetch(`http://localhost:5000/products/${id}`)
           .then(res => res.json())
           .then(data => setProduct(data));
@@ -127,18 +125,16 @@ const ProductDetailPage = () => {
   };
 
   if (loading) return <div className="container" style={{ marginTop: '100px' }}>Loading...</div>;
-
-  if (!product) {
-    return <div className="container" style={{ marginTop: '100px' }}>Product not found</div>;
-  }
+  if (!product) return <div className="container" style={{ marginTop: '100px' }}>Product not found</div>;
 
   return (
     <div className="product-detail-page">
       <Header />
 
       <div className="container detail-container">
+        {/* Updated Modern Back Button */}
         <button className="back-btn" onClick={() => navigate(-1)}>
-          <FaArrowLeft /> Back to Shop
+          <FaArrowLeft size={14} /> Back to Shop
         </button>
 
         <div className="detail-grid">
@@ -173,7 +169,7 @@ const ProductDetailPage = () => {
             </div>
 
             <p className="detail-description">
-              {product.description || `Elevate your style with this premium quality ${product.name.toLowerCase()}. Crafted with comfort and durability in mind.`}
+              {product.description || `Elevate your style with this premium quality ${product.name.toLowerCase()}.`}
             </p>
 
             <div className="selection-group">
