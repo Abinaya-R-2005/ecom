@@ -4,53 +4,68 @@ import { useNavigate } from "react-router-dom";
 import { useWishlist } from "../context/WishlistContext";
 import { useCart } from "../context/CartContext";
 import {
-  FaUserCircle, FaBoxOpen, FaHeart, FaMapMarkerAlt,
-  FaRedo, FaSignOutAlt, FaEdit, FaTrash,
-  FaPlus, FaShoppingBag, FaShieldAlt, FaChevronRight,
+  FaUserCircle, FaBoxOpen, FaMapMarkerAlt,
+  FaSignOutAlt, FaEdit, FaPlus,
+  FaShoppingBag, FaShieldAlt, FaChevronRight,
   FaArrowLeft
 } from "react-icons/fa";
 import "./Profile.css";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { wishlist, removeFromWishlist, setWishlist } = useWishlist();
+  const { removeFromWishlist, setWishlist } = useWishlist();
   const { addToCart } = useCart();
 
-  const userLocal = JSON.parse(localStorage.getItem("user"));
+  // ✅ SAFE localStorage read (NO CRASH)
+  const userLocal = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
+
   const userEmail = userLocal?.email;
 
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
   const [addresses, setAddresses] = useState([]);
 
-  // Address form
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [addressLabel, setAddressLabel] = useState("");
   const [addressText, setAddressText] = useState("");
 
-  // Password change
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [profilePic, setProfilePic] = useState(localStorage.getItem("profilePic"));
 
-  // 🔹 FAST PARALLEL FETCH (Fixes slow profile loading)
-  useEffect(() => {
-    if (!userEmail) return;
+  // ✅ IF NOT LOGGED IN → STOP LOADING
+  if (!userEmail) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "120px" }}>
+        <h2>Please login to view your profile</h2>
+      </div>
+    );
+  }
 
+  // ✅ LOAD PROFILE DATA (WITH FALLBACK)
+  useEffect(() => {
     Promise.all([
-      fetch(`http://localhost:5000/user/${userEmail}`).then(res => res.json()),
-      fetch(`http://localhost:5000/orders/${userEmail}`).then(res => res.json()),
-      fetch(`http://localhost:5000/wishlist/${userEmail}`).then(res => res.json())
+      fetch(`http://localhost:5000/user/${userEmail}`).then(r => r.json()).catch(() => null),
+      fetch(`http://localhost:5000/orders/${userEmail}`).then(r => r.json()).catch(() => []),
+      fetch(`http://localhost:5000/wishlist/${userEmail}`).then(r => r.json()).catch(() => [])
     ])
       .then(([userData, ordersData, wishlistData]) => {
-        setUser(userData);
-        setAddresses(userData.addresses || []);
+        // ✅ CRITICAL FIX: fallback to localStorage user
+        const safeUser = userData && userData.email ? userData : userLocal;
+
+        setUser(safeUser);
+        setAddresses(safeUser?.addresses || []);
         setOrders(ordersData || []);
         setWishlist(wishlistData || []);
       })
-      .catch(err => console.error(err));
+      .catch(() => {
+        // ✅ EVEN IF EVERYTHING FAILS → PAGE LOADS
+        setUser(userLocal);
+      });
   }, [userEmail, setWishlist]);
 
   const logout = () => {
@@ -58,19 +73,6 @@ const Profile = () => {
     navigate("/");
   };
 
-  // ✅ Wishlist actions
-  const handleMoveToCart = (product) => {
-    addToCart(product);
-    removeFromWishlist(product.productId || product._id);
-  };
-
-  const handleDeleteFromWishlist = (productId) => {
-    if (window.confirm("Remove this item from wishlist?")) {
-      removeFromWishlist(productId);
-    }
-  };
-
-  // ✅ Address handlers
   const handleAddAddress = async () => {
     if (!addressText) return alert("Address required");
 
@@ -85,13 +87,12 @@ const Profile = () => {
     });
 
     const data = await res.json();
-    setAddresses(data.addresses);
+    setAddresses(data.addresses || []);
     setShowAddressForm(false);
     setAddressLabel("");
     setAddressText("");
   };
 
-  // ✅ PASSWORD CHANGE (REAL LOGIC)
   const handleChangePassword = async () => {
     if (!newPassword || newPassword !== confirmPassword) {
       return alert("Passwords do not match");
@@ -108,7 +109,7 @@ const Profile = () => {
     });
 
     const data = await res.json();
-    alert(data.message);
+    alert(data.message || "Password updated");
 
     if (res.ok) {
       setCurrentPassword("");
@@ -117,7 +118,14 @@ const Profile = () => {
     }
   };
 
-  if (!user) return <p>Loading profile...</p>;
+  // ✅ FINAL STOP FOR INFINITE LOADING
+  if (!user) {
+    return (
+      <p style={{ textAlign: "center", marginTop: "120px" }}>
+        Loading profile...
+      </p>
+    );
+  }
 
   return (
     <div className="profile-page-bg">
@@ -125,7 +133,7 @@ const Profile = () => {
       {/* BACK BUTTON */}
       <div className="back-home-wrapper">
         <button className="back-home-btn" onClick={() => navigate("/home")}>
-          <FaArrowLeft className="back-icon" /> Back to Store
+          <FaArrowLeft /> Back to Store
         </button>
       </div>
 
@@ -134,6 +142,7 @@ const Profile = () => {
         {/* SIDEBAR */}
         <aside className="profile-sidebar">
           <div className="profile-user-card">
+
             <div className="avatar-outer-container">
               <div className="avatar-wrapper">
                 {profilePic ? (
@@ -142,12 +151,14 @@ const Profile = () => {
                   <FaUserCircle className="profile-avatar-placeholder" />
                 )}
               </div>
+
               <button
                 className="avatar-edit-btn"
                 onClick={() => document.getElementById("avatarInput").click()}
               >
                 <FaEdit size={14} />
               </button>
+
               <input
                 type="file"
                 id="avatarInput"
@@ -165,6 +176,7 @@ const Profile = () => {
                 }}
               />
             </div>
+
             <h2>{user.name}</h2>
             <p className="user-meta">{user.email}</p>
           </div>
@@ -173,6 +185,7 @@ const Profile = () => {
             <button className="nav-btn" onClick={() => navigate("/orders")}>
               <FaBoxOpen /> <span>My Orders</span> <FaChevronRight />
             </button>
+
             <button className="nav-btn logout-btn" onClick={logout}>
               <FaSignOutAlt /> <span>Logout</span>
             </button>
@@ -182,13 +195,10 @@ const Profile = () => {
         {/* MAIN CONTENT */}
         <main className="profile-content-area">
 
-          {/* ORDERS FROM DB */}
+          {/* ORDERS */}
           <section className="profile-content-section">
-            <div className="section-header-flex">
-              <div className="header-title">
-                <FaShoppingBag className="icon-gold" />
-                <h3>Recent Orders</h3>
-              </div>
+            <div className="header-title">
+              <FaShoppingBag /> <h3>Recent Orders</h3>
             </div>
 
             {orders.length === 0 ? (
@@ -200,7 +210,7 @@ const Profile = () => {
                     <strong>{order.productName}</strong>
                     <p>{new Date(order.createdAt).toLocaleDateString()}</p>
                   </div>
-                  <span className={`status-badge ${order.status.toLowerCase()}`}>
+                  <span className={`status-badge ${order.status?.toLowerCase()}`}>
                     {order.status}
                   </span>
                 </div>
@@ -208,62 +218,55 @@ const Profile = () => {
             )}
           </section>
 
-          {/* ADDRESSES – NO STATIC DATA */}
+          {/* ADDRESSES */}
           <section className="profile-content-section">
-            <div className="section-header-flex">
-              <div className="header-title">
-                <FaMapMarkerAlt className="icon-purple" />
-                <h3>Saved Addresses</h3>
-              </div>
-              <button className="add-new-btn" onClick={() => setShowAddressForm(true)}>
-                <FaPlus /> Add New
-              </button>
+            <div className="header-title">
+              <FaMapMarkerAlt /> <h3>Saved Addresses</h3>
             </div>
 
             {addresses.length === 0 ? (
               <div className="empty-section-placeholder">No saved addresses</div>
             ) : (
-              <div className="address-grid-container">
-                {addresses.map((a, i) => (
-                  <div key={i} className="address-item-card">
-                    <strong>{a.label}</strong>
-                    <p>{a.address}</p>
-                  </div>
-                ))}
-              </div>
+              addresses.map((a, i) => (
+                <div key={i} className="address-item-card">
+                  <strong>{a.label}</strong>
+                  <p>{a.address}</p>
+                </div>
+              ))
             )}
+
+            <button className="add-new-btn" onClick={() => setShowAddressForm(true)}>
+              <FaPlus /> Add New
+            </button>
 
             {showAddressForm && (
               <div className="security-form-card">
                 <input
-                  placeholder="Label (Home / Work)"
+                  placeholder="Label"
                   value={addressLabel}
-                  onChange={(e) => setAddressLabel(e.target.value)}
+                  onChange={e => setAddressLabel(e.target.value)}
                 />
                 <textarea
                   placeholder="Full address"
                   value={addressText}
-                  onChange={(e) => setAddressText(e.target.value)}
+                  onChange={e => setAddressText(e.target.value)}
                 />
                 <button onClick={handleAddAddress}>Save Address</button>
               </div>
             )}
           </section>
 
-          {/* SECURITY – ORIGINAL PASSWORD CHANGE */}
+          {/* SECURITY */}
           <section className="profile-content-section">
             <div className="header-title">
-              <FaShieldAlt className="icon-purple" />
-              <h3>Security</h3>
+              <FaShieldAlt /> <h3>Security</h3>
             </div>
 
             <div className="security-form-card">
               <input type="password" placeholder="Current Password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
               <input type="password" placeholder="New Password" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
               <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
-              <button className="update-pwd-btn" onClick={handleChangePassword}>
-                Update Password
-              </button>
+              <button onClick={handleChangePassword}>Update Password</button>
             </div>
           </section>
 
