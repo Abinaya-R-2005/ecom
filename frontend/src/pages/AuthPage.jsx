@@ -81,46 +81,30 @@ const handleSignup = async (e) => {
   }
 };
 const handleLogin = async (e) => {
-  e.preventDefault();
+  e.preventDefault();   // 🔴 THIS LINE FIXES EVERYTHING
 
-  // ✅ clear old messages FIRST
-  setError("");
-  setSuccess("");
+  const res = await fetch("http://localhost:5000/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
 
-  try {
-    const res = await fetch("http://localhost:5000/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
+  const data = await res.json();
 
-    const data = await res.json();
+  if (!res.ok) {
+    alert(data.message);
+    return;
+  }
 
-    if (!res.ok) {
-      setSuccess(""); // ✅ clear success if any
-      setError(data.message || "Invalid email or password");
-      return;
-    }
+  localStorage.setItem("token", data.token);
+  localStorage.setItem("user", JSON.stringify(data.user));
 
-    // ✅ login success
-    localStorage.setItem("user", JSON.stringify(data.user));
-
-    setError(""); // ✅ clear error
-    setSuccess("Login successful");
-
-    // admin email check (NO role based)
-    if (data.user.email === "admin@gmail.com") {
-      navigate("/admin");
-    } else {
-      navigate("/home");
-    }
-
-  } catch (err) {
-    setSuccess(""); // ✅ clear success
-    setError("Backend server not running (port 5000)");
+  if (data.user.isAdmin) {
+    navigate("/admin");
+  } else {
+    navigate("/home");
   }
 };
-
 
     return (
         <div className="auth-container">

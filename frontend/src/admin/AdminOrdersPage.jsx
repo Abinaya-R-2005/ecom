@@ -1,101 +1,163 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Package, Clock } from "lucide-react";
 import "./AdminOrdersPage.css";
 
+const STATUS_OPTIONS = [
+  "Ordered",
+  "Packed",
+  "Shipped",
+  "Delivered",
+  "Cancelled",
+];
+
 const AdminOrdersPage = () => {
-    const navigate = useNavigate();
-    const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const user = JSON.parse(localStorage.getItem("user"));
+  const navigate = useNavigate();
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
-    useEffect(() => {
-        if (!user || !user.isAdmin) {
-            navigate("/login");
-            return;
-        }
-        fetchOrders();
-    }, []);
+  // ✅ AUTH CHECK
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user") || "null");
 
-    const fetchOrders = async () => {
-        try {
-            // Reusing the existing sales endpoint which returns all orders if no date filter is passed
-            const res = await fetch(`http://localhost:5000/admin/sales?email=${user.email}`);
-            const data = await res.json();
+    if (!token || !user || !user.isAdmin) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
-            if (Array.isArray(data)) {
-                // Sort by newest first
-                const sorted = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                setOrders(sorted);
-            }
-            setLoading(false);
-        } catch (err) {
-            console.error("Failed to fetch orders", err);
-            setLoading(false);
-        }
-    };
+  // ✅ FETCH ORDERS
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
 
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleString();
-    };
+      let url = "http://localhost:5000/admin/orders";
+      if (fromDate && toDate) {
+        url += `?from=${fromDate}&to=${toDate}`;
+      }
 
-    return (
-        <div className="admin-orders-page">
-            <div className="ao-container">
-                <div className="ao-header">
-                    <button className="back-btn" onClick={() => navigate("/admin")}>
-                        <ArrowLeft size={20} /> Back to Dashboard
-                    </button>
-                    <h2>Placed Orders</h2>
-                </div>
+      const res = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-                {loading ? (
-                    <div className="loading-state">Loading orders...</div>
-                ) : orders.length === 0 ? (
-                    <div className="empty-state">
-                        <Package size={48} />
-                        <p>No orders placed yet.</p>
-                    </div>
-                ) : (
-                    <div className="table-wrapper">
-                        <table className="orders-table">
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Customer</th>
-                                    <th>Product</th>
-                                    <th>Qty</th>
-                                    <th>Price</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {orders.map((order) => (
-                                    <tr key={order._id}>
-                                        <td className="order-id">#{order._id.slice(-6).toUpperCase()}</td>
-                                        <td>
-                                            <div className="customer-info">
-                                                <span className="c-name">{order.userName}</span>
-                                                <span className="c-email">{order.userEmail}</span>
-                                            </div>
-                                        </td>
-                                        <td className="product-name">{order.productName}</td>
-                                        <td>{order.quantity}</td>
-                                        <td className="price">${order.price.toFixed(2)}</td>
-                                        <td className="date">{formatDate(order.createdAt)}</td>
-                                        <td>
-                                            <span className="status-badge success">Placed</span>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-            </div>
+      const data = await res.json();
+      setOrders(data.orders || []);
+    } catch (err) {
+      console.error("Failed to load orders", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  // ✅ UPDATE STATUS
+  const updateStatus = async (id, status) => {
+    const token = localStorage.getItem("token");
+
+    await fetch(`http://localhost:5000/admin/orders/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ status }),
+    });
+
+    fetchOrders();
+  };
+
+  return (
+    <div className="admin-orders-page">
+      <div className="ao-container">
+        <div className="ao-header">
+          <button className="back-btn" onClick={() => navigate("/admin")}>
+            <ArrowLeft size={20} /> Back
+          </button>
+          <h2>Placed Orders</h2>
         </div>
-    );
+
+        {/* 🔄 LOADING */}
+        {loading && (
+          <div className="loading-state">
+            <Clock size={40} className="spin" />
+            <p>Loading orders...</p>
+          </div>
+        )}
+
+        {/* 📭 EMPTY */}
+        {!loading && orders.length === 0 && (
+          <div className="empty-state">
+            <Package size={48} />
+            <p>No orders found</p>
+          </div>
+        )}
+
+        {/* 📦 TABLE */}
+        {!loading && orders.length > 0 && (
+          <>
+            <div className="filter-bar">
+              <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+              <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
+              <button className="filter-btn" onClick={fetchOrders}>
+                Filter
+              </button>
+            </div>
+
+            <div className="table-wrapper">
+              <table className="orders-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.map((o) => (
+                    <tr key={o._id}>
+                      <td>#{o._id.slice(-6)}</td>
+                      <td>
+                        <b>{o.userName}</b>
+                        <br />
+                        <small>{o.userEmail}</small>
+                      </td>
+                      <td>{o.productName}</td>
+                      <td>{o.quantity}</td>
+                      <td>${o.price}</td>
+                      <td>{new Date(o.createdAt).toLocaleString()}</td>
+                      <td>
+                        <select
+                          value={o.status}
+                          className={`status-select ${o.status.toLowerCase()}`}
+                          onChange={(e) => updateStatus(o._id, e.target.value)}
+                        >
+                          {STATUS_OPTIONS.map((s) => (
+                            <option key={s}>{s}</option>
+                          ))}
+                        </select>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default AdminOrdersPage;
