@@ -232,7 +232,12 @@ app.get("/products/:id", async (req, res) =>
 
 // ORDERS
 app.post("/orders", async (req, res) => {
-  res.json(await Order.create(req.body));
+  try {
+    const order = await Order.create(req.body);
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to create order" });
+  }
 });
 
 app.get("/orders/:email", async (req, res) => {
