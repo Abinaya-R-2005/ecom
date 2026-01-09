@@ -2,12 +2,28 @@
   padding: 30px;
 }
 
+/* 🔙 Back Button */
+.back-btn {
+  background: #7c3aed;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.back-btn:hover {
+  background: #6d28d9;
+}
+
 .category-title {
   text-align: center;
   margin-bottom: 30px;
   color: #4b2aad;
 }
 
+/* ✅ FIXED CLASS NAME */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -29,7 +45,7 @@
   border-radius: 8px;
 }
 
-/* Mobile Responsiveness */
+/* 📱 Mobile */
 @media (max-width: 600px) {
   .product-grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));

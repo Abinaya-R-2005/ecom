@@ -229,6 +229,21 @@ app.get("/products", async (req, res) => res.json(await Product.find()));
 app.get("/products/:id", async (req, res) =>
   res.json(await Product.findById(req.params.id))
 );
+// PRODUCTS BY CATEGORY
+app.get("/products/category/:category", async (req, res) => {
+  try {
+    const category = req.params.category;
+
+    const products = await Product.find({
+      category: { $regex: new RegExp(`^${category}$`, "i") } // case-insensitive
+    });
+
+    res.json(products);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 // ORDERS
 app.post("/orders", async (req, res) => {

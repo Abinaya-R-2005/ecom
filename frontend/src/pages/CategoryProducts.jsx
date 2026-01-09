@@ -1,27 +1,44 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import "./CategoryProducts.css";
 
 const CategoryProducts = () => {
   const { category } = useParams();
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     fetch(`http://localhost:5000/products/category/${category}`)
       .then(res => res.json())
-      .then(data => setProducts(data))
-      .catch(err => console.error(err));
+      .then(data => {
+        setProducts(data || []);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
   }, [category]);
 
   return (
     <div className="category-page">
+      
+      {/* 🔙 BACK BUTTON */}
+      <button className="back-btn" onClick={() => navigate(-1)}>
+        ← Back
+      </button>
+
       <h2 className="category-title">
         {category.toUpperCase()} PRODUCTS
       </h2>
 
-      <div className="products-grid">
-        {products.length === 0 ? (
+      <div className="product-grid">
+        {loading ? (
+          <p>Loading products...</p>
+        ) : products.length === 0 ? (
           <p>No products found</p>
         ) : (
           products.map(product => (
