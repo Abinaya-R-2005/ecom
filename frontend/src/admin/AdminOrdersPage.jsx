@@ -45,10 +45,22 @@ const AdminOrdersPage = () => {
         },
       });
 
+      if (!res.ok) {
+        throw new Error(`Failed to fetch orders: ${res.status} ${res.statusText}`);
+      }
+
       const data = await res.json();
-      setOrders(data.orders || []);
+      console.log("Orders data:", data); // Debugging log
+
+      if (data && Array.isArray(data.orders)) {
+        setOrders(data.orders);
+      } else {
+        console.error("Invalid data format:", data);
+        setOrders([]);
+      }
     } catch (err) {
       console.error("Failed to load orders", err);
+      alert(`Error loading orders: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -127,20 +139,20 @@ const AdminOrdersPage = () => {
                 <tbody>
                   {orders.map((o) => (
                     <tr key={o._id}>
-                      <td>#{o._id.slice(-6)}</td>
+                      <td>#{o._id?.slice(-6) || 'N/A'}</td>
                       <td>
-                        <b>{o.userName}</b>
+                        <b>{o.userName || 'Unknown'}</b>
                         <br />
-                        <small>{o.userEmail}</small>
+                        <small>{o.userEmail || 'No Email'}</small>
                       </td>
-                      <td>{o.productName}</td>
-                      <td>{o.quantity}</td>
-                      <td>${o.price}</td>
-                      <td>{new Date(o.createdAt).toLocaleString()}</td>
+                      <td>{o.productName || 'Unknown Product'}</td>
+                      <td>{o.quantity || 0}</td>
+                      <td>${o.price || 0}</td>
+                      <td>{o.createdAt ? new Date(o.createdAt).toLocaleString() : 'N/A'}</td>
                       <td>
                         <select
-                          value={o.status}
-                          className={`status-select ${o.status.toLowerCase()}`}
+                          value={o.status || "Ordered"}
+                          className={`status-select ${(o.status || "ordered").toLowerCase()}`}
                           onChange={(e) => updateStatus(o._id, e.target.value)}
                         >
                           {STATUS_OPTIONS.map((s) => (
