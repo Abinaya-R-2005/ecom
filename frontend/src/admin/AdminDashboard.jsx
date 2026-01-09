@@ -41,6 +41,9 @@ const AdminDashboard = () => {
           <button onClick={() => navigate("/admin/orders")} style={{ background: "#3b82f6" }}>
             Placed Orders
           </button>
+          <button onClick={() => navigate("/admin/support")} style={{ background: "#8b5cf6" }}>
+            Customer Support
+          </button>
         </div>
 
 

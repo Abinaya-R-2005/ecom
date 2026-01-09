@@ -1,0 +1,319 @@
+/* Inherit most styles from CustomerService.css or verify shared styles? 
+   Since we don't have a shared CSS, we'll implement specific styles for Admin here.
+   It looks very similar to the User Chat UI. */
+
+.admin-support-page.chat-mode {
+    max-width: 1200px;
+    height: 85vh;
+    padding: 20px;
+    margin: 20px auto;
+    background: #f8f9fa;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+}
+
+.chat-container {
+    display: flex;
+    height: 100%;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.chat-sidebar {
+    width: 350px;
+    border-right: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+}
+
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.sidebar-header h2 {
+    margin: 0;
+    color: #1e293b;
+}
+
+.chat-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.chat-item {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+    transition: background 0.2s;
+}
+
+.chat-item:hover {
+    background: #f8fafc;
+}
+
+.chat-item.active {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+}
+
+.chat-avatar.user-avatar {
+    width: 45px;
+    height: 45px;
+    background: #3b82f6;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.chat-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.chat-info h4 {
+    margin: 0 0 5px 0;
+    color: #334155;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-info p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.time-ago {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+/* Chat Window */
+.chat-window {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #f8fafc;
+    position: relative;
+}
+
+.no-chat-selected {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #94a3b8;
+}
+
+.chat-header {
+    padding: 15px 20px;
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.chat-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #1e293b;
+}
+
+.messages-area {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.message-bubble {
+    max-width: 70%;
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    position: relative;
+}
+
+/* Admin Sender */
+.message-bubble.admin {
+    align-self: flex-end;
+    background: #3b82f6;
+    color: white;
+    border-bottom-right-radius: 2px;
+}
+
+/* User Sender */
+.message-bubble.user {
+    align-self: flex-start;
+    background: white;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+    border-bottom-left-radius: 2px;
+}
+
+.message-time {
+    display: block;
+    font-size: 0.7rem;
+    margin-top: 6px;
+    opacity: 0.8;
+    text-align: right;
+}
+
+.message-bubble img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 8px;
+}
+
+/* Input */
+.chat-input-area {
+    padding: 20px;
+    background: white;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.chat-input-area input[type="text"] {
+    flex: 1;
+    padding: 12px 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 30px;
+    outline: none;
+    font-size: 0.95rem;
+}
+
+.chat-input-area input:focus {
+    border-color: #3b82f6;
+}
+
+.send-btn,
+.attach-btn {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.send-btn:hover {
+    transform: scale(1.1);
+}
+
+.input-preview {
+    position: absolute;
+    bottom: 80px;
+    left: 20px;
+    background: white;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.input-preview img {
+    height: 60px;
+    border-radius: 4px;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+}
+
+/* Delete Button */
+.delete-chat-btn {
+    background: #fee2e2;
+    color: #ef4444;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-left: 10px;
+}
+
+.delete-chat-btn:hover {
+    background: #fecaca;
+}
+
+/* Mobile */
+.mobile-back {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #64748b;
+}
+
+@media (max-width: 768px) {
+    .admin-support-page.chat-mode {
+        padding: 0;
+        margin: 0;
+        height: 100vh;
+        border-radius: 0;
+        max-width: 100%;
+    }
+
+    .chat-container {
+        border-radius: 0;
+    }
+
+    .chat-sidebar {
+        width: 100%;
+    }
+
+    .chat-sidebar.mobile-hidden {
+        display: none;
+    }
+
+    .chat-window.mobile-hidden {
+        display: none;
+    }
+
+    .mobile-back {
+        display: block;
+    }
+}

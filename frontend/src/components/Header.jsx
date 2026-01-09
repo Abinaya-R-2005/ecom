@@ -50,7 +50,7 @@ const Header = ({ onSearch }) => {
             </span>
           </div>
           <div className="top-links">
-            <Link to="/service">Customer Service</Link>
+            <Link to="/customer-service">Customer Service</Link>
             <Link to="/track">Track Order</Link>
             <Link to="/app">Download App</Link>
           </div>

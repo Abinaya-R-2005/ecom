@@ -105,6 +105,24 @@ const reviewSchema = new mongoose.Schema({
 });
 const Review = mongoose.model("Review", reviewSchema);
 
+// CUSTOMER SUPPORT
+// CUSTOMER SUPPORT CHAT
+const messageSchema = new mongoose.Schema({
+  sender: { type: String, enum: ["user", "admin"] },
+  text: String,
+  image: String,
+  timestamp: { type: Date, default: Date.now },
+});
+
+const supportSchema = new mongoose.Schema({
+  userEmail: String,
+  userName: String,
+  subject: String, // First message snippet
+  messages: [messageSchema],
+  lastUpdated: { type: Date, default: Date.now },
+});
+const Support = mongoose.model("Support", supportSchema);
+
 /* ================= IMAGE UPLOAD ================= */
 const storage = multer.diskStorage({
   destination: "uploads/",
@@ -114,24 +132,98 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* ================= AUTH ================= */
-
 const verifyAdmin = (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) return res.status(401).json({ message: "No token" });
-
     const decoded = jwt.verify(token, "SECRET_KEY");
-
-    if (!decoded.isAdmin) {
-      return res.status(403).json({ message: "Admin only" });
-    }
-
+    if (!decoded.isAdmin) return res.status(403).json({ message: "Admin only" });
     req.user = decoded;
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
   }
 };
+
+// ... (Existing Login/Signup routes remain unchanged) ...
+
+/* ================= SUPPORT CHAT ================= */
+
+// START NEW CHAT (USER)
+app.post("/support/start", upload.single("image"), async (req, res) => {
+  try {
+    const { userEmail, userName, message } = req.body;
+    const initialMessage = {
+      sender: "user",
+      text: message,
+      image: req.file ? `/uploads/${req.file.filename}` : "",
+    };
+
+    const support = await Support.create({
+      userEmail,
+      userName,
+      subject: message.substring(0, 50) + (message.length > 50 ? "..." : ""),
+      messages: [initialMessage],
+    });
+    res.json(support);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to start chat" });
+  }
+});
+
+// GET USER CHATS
+app.get("/support/user/:email", async (req, res) => {
+  try {
+    const chats = await Support.find({ userEmail: req.params.email }).sort({ lastUpdated: -1 });
+    res.json(chats);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch chats" });
+  }
+});
+
+// GET ALL CHATS (ADMIN)
+app.get("/support/admin", verifyAdmin, async (req, res) => {
+  try {
+    const chats = await Support.find().sort({ lastUpdated: -1 });
+    res.json(chats);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch chats" });
+  }
+});
+
+// SEND MESSAGE (BOTH USER & ADMIN)
+app.put("/support/:id/message", upload.single("image"), async (req, res) => {
+  try {
+    const { sender, text } = req.body; // sender: 'user' or 'admin'
+    const newMessage = {
+      sender,
+      text,
+      image: req.file ? `/uploads/${req.file.filename}` : "",
+    };
+
+    await Support.findByIdAndUpdate(req.params.id, {
+      $push: { messages: newMessage },
+      lastUpdated: new Date(),
+    });
+
+    res.json(newMessage);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to send message" });
+  }
+});
+
+// DELETE CHAT (ADMIN)
+app.delete("/admin/support/:id", verifyAdmin, async (req, res) => {
+  try {
+    await Support.findByIdAndDelete(req.params.id);
+    res.json({ message: "Chat deleted" });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to delete chat" });
+  }
+});
+
+/* ================= SERVER ================= */
+app.listen(5000, () => console.log("Server running on port 5000"));
 
 // SIGNUP
 app.post("/signup", async (req, res) => {
@@ -257,6 +349,57 @@ app.post("/orders", async (req, res) => {
 
 app.get("/orders/:email", async (req, res) => {
   res.json(await Order.find({ userEmail: req.params.email }));
+});
+
+/* ================= SUPPORT ================= */
+
+// SUBMIT SUPPORT REQUEST
+app.post("/support", upload.single("image"), async (req, res) => {
+  try {
+    const { userEmail, userName, message } = req.body;
+    const support = await Support.create({
+      userEmail,
+      userName,
+      message,
+      image: req.file ? `/uploads/${req.file.filename}` : "",
+    });
+    res.json({ message: "Support request submitted", support });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to submit request" });
+  }
+});
+
+// GET SUPPORT REQUESTS (ADMIN)
+app.get("/admin/support", verifyAdmin, async (req, res) => {
+  try {
+    const requests = await Support.find().sort({ createdAt: -1 });
+    res.json(requests);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch support requests" });
+  }
+});
+
+// ADMIN REPLY
+app.put("/admin/support/:id/reply", verifyAdmin, async (req, res) => {
+  try {
+    await Support.findByIdAndUpdate(req.params.id, {
+      reply: req.body.reply,
+      replyAt: new Date(),
+    });
+    res.json({ message: "Reply sent" });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to send reply" });
+  }
+});
+
+// GET USER SUPPORT HISTORY
+app.get("/support/history/:email", async (req, res) => {
+  try {
+    const history = await Support.find({ userEmail: req.params.email }).sort({ createdAt: -1 });
+    res.json(history);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch history" });
+  }
 });
 
 /* ================= SERVER ================= */

@@ -16,7 +16,9 @@ import AddCategory from "./admin/AddCategory";
 import AddProduct from "./admin/AddProduct";
 import RemoveProductPage from "./admin/RemoveProductPage";
 import AdminOrdersPage from "./admin/AdminOrdersPage";
+import AdminSupportPage from "./admin/AdminSupportPage"; // ✅ Import Admin Support
 import OrdersPage from "./pages/OrdersPage"; // ✅ Import Orders Page
+import CustomerService from "./pages/CustomerService"; // ✅ Import Customer Service Page
 import Profile from "./pages/Profile";
 function App() {
   return (
@@ -35,6 +37,7 @@ function App() {
             <Route path="/orders" element={<OrdersPage />} /> {/* ✅ Orders Route */}
             <Route path="/order-success" element={<OrderSuccess />} /> {/* ✅ Success Page */}
             <Route path="/product/:id" element={<ProductDetailPage />} />
+            <Route path="/customer-service" element={<CustomerService />} />
 
             {/* Admin Route (Optional if you have it) */}
             {/* Admin Route */}
@@ -42,7 +45,9 @@ function App() {
             <Route path="/admin/add-category" element={<AddCategory />} />
             <Route path="/admin/add-product" element={<AddProduct />} />
             <Route path="/admin/remove-product" element={<RemoveProductPage />} />
+            <Route path="/admin/remove-product" element={<RemoveProductPage />} />
             <Route path="/admin/orders" element={<AdminOrdersPage />} />
+            <Route path="/admin/support" element={<AdminSupportPage />} />
 
             {/* Category Products Route */}
             <Route path="/category/:category" element={<CategoryProducts />} />
